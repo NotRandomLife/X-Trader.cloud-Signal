@@ -31,11 +31,10 @@
     header{position:sticky;top:0;z-index:50}
   </style>
 
-  <!-- ===== COMPACT SIGNALS MODE ===== -->
+  <!-- ===== COMPACT SIGNALS MODE + ATTENZIONE VISIVA ===== -->
   <style>
-    /* riduci completamente l’altezza della card e gli spazi */
+    /* compatto */
     .signals-card{min-height:auto !important; padding:8px !important;}
-    /* contenitore singola riga */
     .signal-line{
       font: 600 13px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       line-height: 1.2;
@@ -44,9 +43,43 @@
       overflow: hidden;
       text-overflow: ellipsis;
       margin: 4px 0;
+      position: relative;
     }
-    .signals-card .border{border:0 !important;}
-    .signals-card .bg-slate-900\/60{background:transparent !important;}
+    /* badge NEW */
+    .new-badge{
+      display: inline-block;
+      margin-left: .5rem;
+      padding: 2px 6px;
+      font-size: 10px;
+      font-weight: 800;
+      border-radius: 9999px;
+      background:#1f2937;
+      border:1px solid #374151;
+      color:#fefefe;
+      vertical-align: middle;
+      opacity:0;
+      transform: translateY(-2px);
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .new-badge.show{opacity:1; transform: translateY(0)}
+
+    /* lampeggio/glow per attirare lo sguardo */
+    @keyframes flashG { 0%{box-shadow:0 0 0 rgba(0,0,0,0)} 20%{box-shadow:0 0 24px #10b98133} 100%{box-shadow:0 0 0 rgba(0,0,0,0)} }
+    @keyframes flashR { 0%{box-shadow:0 0 0 rgba(0,0,0,0)} 20%{box-shadow:0 0 24px #ef444433} 100%{box-shadow:0 0 0 rgba(0,0,0,0)} }
+    @keyframes flashN { 0%{box-shadow:0 0 0 rgba(0,0,0,0)} 20%{box-shadow:0 0 24px #9ca3af33} 100%{box-shadow:0 0 0 rgba(0,0,0,0)} }
+
+    .flash-buy   { animation: flashG 1.2s ease-out 1; }
+    .flash-sell  { animation: flashR 1.2s ease-out 1; }
+    .flash-hold  { animation: flashN 1.2s ease-out 1; }
+
+    /* bordi del contenitore quando lampeggia (leggera evidenza) */
+    .highlight-border{
+      border-radius: 8px;
+      outline: 2px solid transparent;
+    }
+    .highlight-border.buy  { outline-color:#10b98155 }
+    .highlight-border.sell { outline-color:#ef444455 }
+    .highlight-border.hold { outline-color:#9ca3af55 }
   </style>
 
 </head>
@@ -86,8 +119,11 @@
             <button id="refresh" class="px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm" data-i18n="refresh">Aggiorna</button>
           </div>
 
-          <!-- UNA SOLA RIGA: DATA — PAIR — SIGNAL -->
-          <div id="signalLine" class="signal-line">N/D</div>
+          <!-- UNA SOLA RIGA: DATA — PAIR — SIGNAL + BADGE -->
+          <div id="signalWrap" class="highlight-border">
+            <span id="signalLine" class="signal-line">N/D</span>
+            <span id="newBadge" class="new-badge">NEW</span>
+          </div>
           <p id="err" class="text-red-400 text-xs mt-1"></p>
         </div>
 
@@ -117,15 +153,17 @@
   </footer>
 
   <!-- =========================
-       SCRIPT LETTURA SEGNALI (UNA RIGA FISSA)
+       SCRIPT LETTURA SEGNALI (CON ALERT VISIVO)
        ========================= -->
   <script>
     (function(){
+      const elWrap = document.getElementById('signalWrap');
       const elLine = document.getElementById('signalLine');
+      const elBadge= document.getElementById('newBadge');
       const elErr  = document.getElementById('err');
       const btn    = document.getElementById('refresh');
 
-      // stile in caso il CSS non si carichi
+      // stile di fallback
       if (elLine) {
         elLine.style.font = '600 13px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace';
         elLine.style.whiteSpace = 'nowrap';
@@ -134,8 +172,32 @@
         elLine.style.lineHeight = '1.2';
       }
 
-      // prova /api/signal (se hai redirect nel netlify.toml), altrimenti fallback su /.netlify/functions/signal
-      const endpoints = ['/api/signal', '/.netlify/functions/signal'];
+      const endpoints = ['/api/signal', '/.netlify/functions/signal']; // prova /api, poi fallback
+      let lastAt = null;   // per capire se è cambiato
+      let lastTitle = document.title;
+      let titleTimer = null;
+      let badgeTimer = null;
+
+      function flashTitle(text, ms=3000){
+        clearTimeout(titleTimer);
+        const base = lastTitle;
+        let on = true;
+        document.title = text + ' • ' + base;
+        titleTimer = setInterval(()=>{
+          on = !on;
+          document.title = on ? (text + ' • ' + base) : base;
+        }, 700);
+        setTimeout(()=>{
+          clearInterval(titleTimer);
+          document.title = base;
+        }, ms);
+      }
+
+      function showBadge(){
+        clearTimeout(badgeTimer);
+        elBadge.classList.add('show');
+        badgeTimer = setTimeout(()=>elBadge.classList.remove('show'), 2000);
+      }
 
       async function fetchFirstWorking() {
         for (const url of endpoints) {
@@ -147,32 +209,55 @@
         throw new Error('Nessun endpoint disponibile');
       }
 
-      function render(data){
+      function render(data, isNew){
         elErr.textContent = '';
         if (!data) {
           elLine.textContent = 'Nessun segnale salvato';
           elLine.style.color = '#e5e7eb';
+          elWrap.className = 'highlight-border';
           return;
         }
         const when = new Date(data.at).toLocaleString();
         const pair = data.pair || 'BTCUSDC';
         const sig  = String(data.signal || 'HOLD').toUpperCase();
 
-        // una sola riga: DATA — PAIR — SIGNAL (sempre insieme)
+        // testo unico
         elLine.textContent = `${when} — ${pair} — ${sig}`;
 
-        // colore del segnale
-        elLine.style.color = (sig === 'BUY') ? '#34d399' : (sig === 'SELL') ? '#f87171' : '#e5e7eb';
+        // colore del testo
+        const color = (sig === 'BUY') ? '#34d399' : (sig === 'SELL') ? '#f87171' : '#e5e7eb';
+        elLine.style.color = color;
+
+        // effetti se è nuovo
+        if (isNew) {
+          // flash colore + border
+          const cls = (sig === 'BUY') ? 'flash-buy buy' : (sig === 'SELL') ? 'flash-sell sell' : 'flash-hold hold';
+          elLine.classList.add(cls.split(' ')[0]);     // flash-*
+          elWrap.className = `highlight-border ${cls.split(' ')[1]}`; // border color
+          setTimeout(()=> elLine.classList.remove('flash-buy','flash-sell','flash-hold'), 1400);
+
+          // badge NEW e titolo lampeggiante
+          showBadge();
+          flashTitle(`NEW ${sig}`);
+          // vibrazione (se supportata, mobile)
+          if (navigator.vibrate) { try { navigator.vibrate(80); } catch(_){} }
+        }
       }
 
       async function loadSignal(){
         try {
           const data = await fetchFirstWorking();
-          render(data);
+
+          const isNew = data && data.at && data.at !== lastAt;
+          render(data, isNew);
+
+          if (isNew) lastAt = data.at || lastAt;
+
         } catch (e) {
           elErr.textContent = 'Errore lettura segnale';
           elLine.textContent = '—';
           elLine.style.color = '#e5e7eb';
+          elWrap.className = 'highlight-border';
         }
       }
 
