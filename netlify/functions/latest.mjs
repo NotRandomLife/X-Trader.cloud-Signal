@@ -1,16 +1,9 @@
 import { getStore } from "@netlify/blobs";
 
-const headers = {
-  "Content-Type": "application/json",
-  "Access-Control-Allow-Origin": "*",
-  "Cache-Control": "no-store"
-};
-
 export default async () => {
-  const store = getStore({ name: "xtrader-signals", consistency: "strong" });
-  const raw = await store.get("signals"); // string | null
-  const body = raw || JSON.stringify({ history: [] });
-  return new Response(body, { status: 200, headers });
+  const cors = { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" };
+  const store = getStore("xtrader-signals");
+  const last = (await store.get("last", { type: "json" })) || null;
+  return new Response(JSON.stringify(last), { status: 200, headers: cors });
 };
 
-export const config = { path: "/api/latest" };
