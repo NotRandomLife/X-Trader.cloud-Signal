@@ -1,42 +1,34 @@
 import { getStore } from "@netlify/blobs";
 
-const commonHeaders = {
-  "Content-Type": "application/json",
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Cache-Control": "no-store"
-};
-
 export default async (req) => {
-  if (req.method === "OPTIONS") return new Response("", { status: 204, headers: commonHeaders });
-  if (req.method !== "POST")   return new Response("Method Not Allowed", { status: 405, headers: commonHeaders });
+  const cors = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "authorization,content-type",
+    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+    "Content-Type": "application/json"
+  };
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
 
-  const auth = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
-  const okToken = Netlify.env.get("SIGNAL_TOKEN");
-  if (!okToken || auth !== okToken) {
-    return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: commonHeaders });
+  const token = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
+  const expected = process.env.BOT_TOKEN || "MIO_TOKEN_BOT";
+  const store = getStore("xtrader-signals"); // spazio KV persistente
+
+  if (req.method === "POST") {
+    if (token !== expected) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: cors });
+    const body = await req.json().catch(() => ({}));
+    const record = {
+      signal: (body.signal || "hold").toLowerCase(),
+      pair: body.pair || "BTCUSDC",
+      at: new Date().toISOString()
+    };
+    await store.setJSON("last", record);
+    return new Response(JSON.stringify({ ok: true }), { status: 200, headers: cors });
   }
 
-  let payload = {};
-  try { payload = await req.json(); } catch (_) {}
-  const pair = String(payload.pair || "BTCUSDC").toUpperCase();
-  const signal = String(payload.signal || "HOLD").toUpperCase();
-  const entry = { pair, signal, timestamp: new Date().toISOString() };
+  if (req.method === "GET") {
+    const last = (await store.get("last", { type: "json" })) || null;
+    return new Response(JSON.stringify(last), { status: 200, headers: cors });
+  }
 
-  const store = getStore({ name: "xtrader-signals", consistency: "strong" });
-  let current = {};
-  try {
-    const raw = await store.get("signals");
-    if (raw) current = JSON.parse(raw);
-  } catch (_) {}
-
-  const history = Array.isArray(current.history) ? [entry, ...current.history].slice(0, 50) : [entry];
-  const out = { ...entry, history };
-
-  await store.set("signals", JSON.stringify(out));
-
-  return new Response(JSON.stringify({ ok: true }), { status: 200, headers: commonHeaders });
+  return new Response(JSON.stringify({ error: "method_not_allowed" }), { status: 405, headers: cors });
 };
-
-export const config = { path: "/api/signal" };
