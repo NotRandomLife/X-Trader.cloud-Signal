@@ -23,6 +23,15 @@
     @media(min-width:768px){.signals-card{min-height:480px}}
   </style>
 
+  <!-- HERO BACKGROUND SCALE (zoom out immagine) -->
+  <style>
+    .hero{background:url('assets/X_Trader_BANNER.png') center 35% no-repeat;}
+    /* Zoom out: mostra più porzione dell'immagine senza ridurre lo spazio della sezione */
+    .hero{background-size: 85% auto;}
+    @media (max-width: 1023px){ .hero{ background-size: 95% auto; } }
+    @media (min-width: 1280px){ .hero{ background-size: 80% auto; } }
+  </style>
+
   <!-- HEADER UI -->
   <style>
     #langSelect{background:#0f172a;border:1px solid #334155;border-radius:8px;color:#e2e8f0}
@@ -139,10 +148,10 @@
     </div>
   </header>
 
-  <section class="relative w-full border-b border-slate-800 overflow-visible" style="background:url('assets/X_Trader_BANNER.png') center 35%;">
+  <section class="relative w-full border-b border-slate-800 overflow-visible hero">
     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none"></div>
-    <div class="relative max-w-6xl mx-auto px-4 py-10 md:py-14 lg:py-16 min-h-[140px] flex flex-col justify-end">
-      <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold drop-shadow" data-i18n="live_banner">Segnali crypto in tempo reale per BTC USDC</h1>
+    <div class="relative max-w-6xl mx-auto px-4 py-16 md:py-24 lg:py-28 min-h-[220px] flex flex-col justify-end">
+      <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold drop-shadow" data-i18n="live_banner">Segnali <span class="text-emerald-300">AI</span> crypto in tempo reale per BTC USDC</h1>
       <p class="text-slate-200 mt-2 text-sm md:text-base" data-i18n="signals_note">Allineato ai 5 minuti con finestra di tolleranza.</p>
     </div>
   </section>
