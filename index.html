@@ -8,7 +8,6 @@
   <link rel="icon" type="image/png" href="assets/logo-32.png" />
   <script src="https://cdn.tailwindcss.com"></script>
   <title>X TRADER — Live</title>
-
   <style>
     body{background:#0b0f15;color:#eaeef5}
     .card{background:#101825;border:1px solid #1e293b}
@@ -35,7 +34,9 @@
   <style>
     /* riduci completamente l’altezza della card e gli spazi */
     .signals-card{min-height:auto !important; padding:8px !important;}
-    /* contenitore singola riga */
+    /* area lista: nessun gap verticale grande */
+    #signals{display:flex; flex-direction:column; gap:4px !important; margin:4px 0 !important;}
+    /* singola riga testo, compatta */
     .signal-line{
       font: 600 13px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       line-height: 1.2;
@@ -43,8 +44,14 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      margin: 4px 0;
     }
+    .signal-line .when{color:#94a3b8; font-weight:500}
+    .signal-line .pair{color:#a5b4fc; font-weight:700}
+    .signal-line .sig{font-weight:800}
+    .sig.buy{color:#34d399}   /* verde */
+    .sig.sell{color:#f87171}  /* rosso */
+    .sig.hold{color:#cbd5e1}  /* neutro */
+    /* elimina bordi/box interni eventualmente generati da altri stili */
     .signals-card .border{border:0 !important;}
     .signals-card .bg-slate-900\/60{background:transparent !important;}
   </style>
@@ -85,12 +92,9 @@
             <h2 class="text-lg font-bold" data-i18n="latest_signals">Ultimi segnali</h2>
             <button id="refresh" class="px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm" data-i18n="refresh">Aggiorna</button>
           </div>
-
-          <!-- UNA SOLA RIGA: DATA — PAIR — SIGNAL -->
-          <div id="signalLine" class="signal-line">N/D</div>
+          <div id="signals"></div>
           <p id="err" class="text-red-400 text-xs mt-1"></p>
         </div>
-
         <div class="slot-wide text-center">ADS 728×90 / 970×120</div>
       </section>
 
@@ -117,25 +121,14 @@
   </footer>
 
   <!-- =========================
-       SCRIPT LETTURA SEGNALI (UNA RIGA FISSA)
+       SCRIPT LETTURA SEGNALI (COMPATTO)
        ========================= -->
   <script>
     (function(){
-      const elLine = document.getElementById('signalLine');
+      const elList = document.getElementById('signals');
       const elErr  = document.getElementById('err');
       const btn    = document.getElementById('refresh');
-
-      // stile in caso il CSS non si carichi
-      if (elLine) {
-        elLine.style.font = '600 13px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace';
-        elLine.style.whiteSpace = 'nowrap';
-        elLine.style.overflow = 'hidden';
-        elLine.style.textOverflow = 'ellipsis';
-        elLine.style.lineHeight = '1.2';
-      }
-
-      // prova /api/signal (se hai redirect nel netlify.toml), altrimenti fallback su /.netlify/functions/signal
-      const endpoints = ['/api/signal', '/.netlify/functions/signal'];
+      const endpoints = ['/api/signal', '/.netlify/functions/signal']; // prova /api, poi fallback
 
       async function fetchFirstWorking() {
         for (const url of endpoints) {
@@ -149,20 +142,22 @@
 
       function render(data){
         elErr.textContent = '';
+        elList.innerHTML = '';
         if (!data) {
-          elLine.textContent = 'Nessun segnale salvato';
-          elLine.style.color = '#e5e7eb';
+          elList.innerHTML = `<div class="signal-line"><span class="when">Nessun segnale salvato</span></div>`;
           return;
         }
         const when = new Date(data.at).toLocaleString();
-        const pair = data.pair || 'BTCUSDC';
-        const sig  = String(data.signal || 'HOLD').toUpperCase();
-
-        // una sola riga: DATA — PAIR — SIGNAL (sempre insieme)
-        elLine.textContent = `${when} — ${pair} — ${sig}`;
-
-        // colore del segnale
-        elLine.style.color = (sig === 'BUY') ? '#34d399' : (sig === 'SELL') ? '#f87171' : '#e5e7eb';
+        const sig  = String(data.signal||'hold').toLowerCase();
+        const line = `
+          <div class="signal-line">
+            <span class="when">${when}</span>
+            &nbsp;—&nbsp;
+            <span class="pair">${data.pair||'BTCUSDC'}</span>
+            &nbsp;—&nbsp;
+            <span class="sig ${sig}">${sig.toUpperCase()}</span>
+          </div>`;
+        elList.innerHTML = line;
       }
 
       async function loadSignal(){
@@ -171,8 +166,7 @@
           render(data);
         } catch (e) {
           elErr.textContent = 'Errore lettura segnale';
-          elLine.textContent = '—';
-          elLine.style.color = '#e5e7eb';
+          elList.innerHTML = '';
         }
       }
 
