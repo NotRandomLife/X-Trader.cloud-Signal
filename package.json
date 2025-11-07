@@ -1,6 +1,5 @@
 {
-  "name": "xtrader-allinone",
-  "version": "1.0.0",
+  "name": "xtrader-functions",
   "private": true,
   "type": "module",
   "dependencies": {
