@@ -30,6 +30,32 @@
     header{position:sticky;top:0;z-index:50}
   </style>
 
+  <!-- ===== COMPACT SIGNALS MODE ===== -->
+  <style>
+    /* riduci completamente l’altezza della card e gli spazi */
+    .signals-card{min-height:auto !important; padding:8px !important;}
+    /* area lista: nessun gap verticale grande */
+    #signals{display:flex; flex-direction:column; gap:4px !important; margin:4px 0 !important;}
+    /* singola riga testo, compatta */
+    .signal-line{
+      font: 600 13px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      line-height: 1.2;
+      color:#e5e7eb;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .signal-line .when{color:#94a3b8; font-weight:500}
+    .signal-line .pair{color:#a5b4fc; font-weight:700}
+    .signal-line .sig{font-weight:800}
+    .sig.buy{color:#34d399}   /* verde */
+    .sig.sell{color:#f87171}  /* rosso */
+    .sig.hold{color:#cbd5e1}  /* neutro */
+    /* elimina bordi/box interni eventualmente generati da altri stili */
+    .signals-card .border{border:0 !important;}
+    .signals-card .bg-slate-900\/60{background:transparent !important;}
+  </style>
+
 </head>
 <body class="min-h-screen">
 
@@ -62,12 +88,12 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <section class="lg:col-span-2 space-y-4">
         <div class="card signals-card rounded-2xl p-4">
-          <div class="flex items-center justify-between mb-3">
-            <h2 class="text-xl font-bold" data-i18n="latest_signals">Ultimi segnali</h2>
-            <button id="refresh" class="px-3 py-2 rounded-xl bg-slate-700 hover:bg-slate-600" data-i18n="refresh">Aggiorna</button>
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="text-lg font-bold" data-i18n="latest_signals">Ultimi segnali</h2>
+            <button id="refresh" class="px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm" data-i18n="refresh">Aggiorna</button>
           </div>
-          <div id="signals" class="space-y-2"></div>
-          <p id="err" class="text-red-400 text-sm"></p>
+          <div id="signals"></div>
+          <p id="err" class="text-red-400 text-xs mt-1"></p>
         </div>
         <div class="slot-wide text-center">ADS 728×90 / 970×120</div>
       </section>
@@ -95,17 +121,14 @@
   </footer>
 
   <!-- =========================
-       SCRIPT LETTURA SEGNALI
-       (INSERITO QUI, prima degli altri script)
+       SCRIPT LETTURA SEGNALI (COMPATTO)
        ========================= -->
   <script>
     (function(){
       const elList = document.getElementById('signals');
       const elErr  = document.getElementById('err');
       const btn    = document.getElementById('refresh');
-
-      // prima prova con /api/signal (se hai messo i redirect nel netlify.toml), altrimenti fallback
-      const endpoints = ['/api/signal', '/.netlify/functions/signal'];
+      const endpoints = ['/api/signal', '/.netlify/functions/signal']; // prova /api, poi fallback
 
       async function fetchFirstWorking() {
         for (const url of endpoints) {
@@ -121,25 +144,20 @@
         elErr.textContent = '';
         elList.innerHTML = '';
         if (!data) {
-          elList.innerHTML = `<div class="p-3 rounded-lg bg-slate-800/60 border border-slate-700 text-slate-300">Nessun segnale salvato</div>`;
+          elList.innerHTML = `<div class="signal-line"><span class="when">Nessun segnale salvato</span></div>`;
           return;
         }
         const when = new Date(data.at).toLocaleString();
-        const color = (data.signal||'hold').toLowerCase() === 'buy'
-          ? 'text-green-400'
-          : (data.signal||'hold').toLowerCase() === 'sell'
-            ? 'text-red-400'
-            : 'text-slate-300';
-
-        const card = `
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-700">
-            <div class="flex items-center justify-between">
-              <div class="text-sm text-slate-400">${when}</div>
-              <div class="text-xs px-2 py-1 rounded bg-slate-800 border border-slate-700">${data.pair || 'BTCUSDC'}</div>
-            </div>
-            <div class="mt-2 text-2xl font-extrabold ${color}">${String(data.signal || 'HOLD').toUpperCase()}</div>
+        const sig  = String(data.signal||'hold').toLowerCase();
+        const line = `
+          <div class="signal-line">
+            <span class="when">${when}</span>
+            &nbsp;—&nbsp;
+            <span class="pair">${data.pair||'BTCUSDC'}</span>
+            &nbsp;—&nbsp;
+            <span class="sig ${sig}">${sig.toUpperCase()}</span>
           </div>`;
-        elList.innerHTML = card;
+        elList.innerHTML = line;
       }
 
       async function loadSignal(){
@@ -148,6 +166,7 @@
           render(data);
         } catch (e) {
           elErr.textContent = 'Errore lettura segnale';
+          elList.innerHTML = '';
         }
       }
 
