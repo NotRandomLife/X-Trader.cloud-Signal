@@ -162,6 +162,10 @@
               <button id="refresh" class="px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm" data-i18n="refresh">Aggiorna</button>
             </div>
           </div>
+          <div class="flex items-center justify-between text-xs text-slate-400 mb-2" id="countdownBar">
+            <span id="countdownLabel">Prossimo segnale tra</span>
+            <span class="font-bold text-slate-200" id="countdown">--:--</span>
+          </div>
           <div id="signals"></div>
           <p id="err" class="text-red-400 text-xs mt-1"></p>
         </div>
@@ -309,6 +313,54 @@
       btn?.addEventListener('click', loadSignal);
       loadSignal();
       setInterval(loadSignal, 5000);
+
+      // =====================
+      //   COUNTDOWN 5 MIN — i18n
+      // =====================
+      const cdEl = document.getElementById('countdown');
+      const cdLbl = document.getElementById('countdownLabel');
+      const langSel = document.getElementById('langSelect');
+      const CT = {
+        'en':'Next signal in', 'it':'Prossimo segnale tra', 'es':'Próxima señal en', 'fr':'Prochain signal dans', 'de':'Nächstes Signal in',
+        'pt':'Próximo sinal em', 'pt-br':'Próximo sinal em', 'ru':'Следующий сигнал через', 'uk':'Наступний сигнал через', 'pl':'Następny sygnał za',
+        'nl':'Volgend signaal over', 'sv':'Nästa signal om', 'no':'Neste signal om', 'da':'Næste signal om', 'fi':'Seuraava signaali',
+        'tr':'Sonraki sinyal', 'el':'Επόμενο σήμα σε', 'cs':'Další signál za', 'sk':'Ďalší signál o', 'hu':'Következő jel',
+        'ro':'Următorul semnal în', 'bg':'Следващ сигнал след', 'sr':'Sledeći signal za', 'hr':'Sljedeći signal za', 'sl':'Naslednji signal čez',
+        'he':'האות הבא בעוד', 'ar':'الإشارة التالية خلال', 'fa':'سیگنال بعدی در', 'hi':'अगला सिग्नल', 'bn':'পরবর্তী সিগন্যাল',
+        'ur':'اگلا سگنل', 'zh-cn':'下个信号还有', 'zh-tw':'下個信號還有', 'ja':'次のシグナルまで', 'ko':'다음 신호까지', 'th':'สัญญาณถัดไปใน',
+        'vi':'Tín hiệu tiếp theo', 'id':'Sinyal berikutnya', 'ms':'Isyarat seterusnya', 'fil':'Susunod na senyal sa'
+      };
+      function getLang(){
+        let l = (langSel && langSel.value) || navigator.language || 'en';
+        l = l.toLowerCase();
+        if(!CT[l]) l = l.split('-')[0];
+        if(!CT[l]) l = 'en';
+        return l;
+      }
+      function applyCdI18n(){ cdLbl.textContent = CT[getLang()] || CT['en']; }
+
+      function next5(){
+        const d = new Date();
+        const m = d.getMinutes();
+        const add = 5 - (m % 5 || 5);
+        d.setSeconds(0,0);
+        d.setMinutes(m + add);
+        return d;
+      }
+      let target = next5();
+      function tick(){
+        const now = new Date();
+        if(now >= target){ target = next5(); }
+        const ms = Math.max(0, target - now);
+        const s = Math.floor(ms/1000);
+        const mm = String(Math.floor(s/60)).padStart(2,'0');
+        const ss = String(s%60).padStart(2,'0');
+        if (cdEl) cdEl.textContent = `${mm}:${ss}`;
+        requestAnimationFrame(()=> setTimeout(tick, 250));
+      }
+      applyCdI18n();
+      tick();
+      langSel?.addEventListener('change', applyCdI18n);
 
       // =====================
       //   PREZZO & VARIAZIONI BINANCE (klines 1m)
