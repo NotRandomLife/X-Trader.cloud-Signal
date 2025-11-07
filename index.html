@@ -32,11 +32,8 @@
 
   <!-- ===== COMPACT SIGNALS MODE ===== -->
   <style>
-    /* riduci completamente l’altezza della card e gli spazi */
     .signals-card{min-height:auto !important; padding:8px !important;}
-    /* area lista: nessun gap verticale grande */
     #signals{display:flex; flex-direction:column; gap:4px !important; margin:4px 0 !important;}
-    /* singola riga testo, compatta */
     .signal-line{
       font: 600 13px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       line-height: 1.2;
@@ -48,10 +45,9 @@
     .signal-line .when{color:#94a3b8; font-weight:500}
     .signal-line .pair{color:#a5b4fc; font-weight:700}
     .signal-line .sig{font-weight:800}
-    .sig.buy{color:#34d399}   /* verde */
-    .sig.sell{color:#f87171}  /* rosso */
-    .sig.hold{color:#cbd5e1}  /* neutro */
-    /* elimina bordi/box interni eventualmente generati da altri stili */
+    .sig.buy{color:#34d399}
+    .sig.sell{color:#f87171}
+    .sig.hold{color:#cbd5e1}
     .signals-card .border{border:0 !important;}
     .signals-card .bg-slate-900\/60{background:transparent !important;}
   </style>
@@ -60,7 +56,7 @@
   <style>
     .signal-line{
       font-weight: 900 !important;
-      font-size: 22px !important;      /* mobile */
+      font-size: 22px !important;
       line-height: 1.35 !important;
       letter-spacing: 0.2px !important;
       text-shadow: 0 0 6px rgba(0,0,0,.35);
@@ -109,7 +105,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
       <section class="lg:col-span-2 space-y-4">
-        <!-- >>> ADS SOPRA I SEGNALI (stessa dimensione di quello sotto) -->
+        <!-- >>> ADS SOPRA I SEGNALI -->
         <div class="slot-wide text-center">ADS 728×90 / 970×120</div>
 
         <div class="card signals-card rounded-2xl p-4">
@@ -121,7 +117,9 @@
           <p id="err" class="text-red-400 text-xs mt-1"></p>
         </div>
 
-        <!-- >>> ADS SOTTO I SEGNALI (già presente) -->
+        <!-- >>> ADS SOTTO I SEGNALI #1 -->
+        <div class="slot-wide text-center">ADS 728×90 / 970×120</div>
+        <!-- >>> ADS SOTTO I SEGNALI #2 (NUOVO) -->
         <div class="slot-wide text-center">ADS 728×90 / 970×120</div>
       </section>
 
@@ -155,7 +153,7 @@
       const elList = document.getElementById('signals');
       const elErr  = document.getElementById('err');
       const btn    = document.getElementById('refresh');
-      const endpoints = ['/api/signal', '/.netlify/functions/signal']; // prova /api, poi fallback
+      const endpoints = ['/api/signal', '/.netlify/functions/signal'];
 
       async function fetchFirstWorking() {
         for (const url of endpoints) {
@@ -203,7 +201,6 @@
     })();
   </script>
 
-  <!-- I TUOI SCRIPT ESISTENTI -->
   <script src="assets/js/i18n.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/fallback.js"></script>
