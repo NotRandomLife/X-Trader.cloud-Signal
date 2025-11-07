@@ -8,6 +8,8 @@
   <link rel="icon" type="image/png" href="assets/logo-32.png" />
   <script src="https://cdn.tailwindcss.com"></script>
   <title>X TRADER — Live</title>
+
+  <!-- BASE THEME -->
   <style>
     body{background:#0b0f15;color:#eaeef5}
     .card{background:#101825;border:1px solid #1e293b}
@@ -21,26 +23,20 @@
     @media(min-width:768px){.signals-card{min-height:480px}}
   </style>
 
+  <!-- HEADER UI -->
   <style>
     #langSelect{background:#0f172a;border:1px solid #334155;border-radius:8px;color:#e2e8f0}
-  </style>
-
-  <style>
     #langSelect{background:#0b1220;border:1px solid #334155;border-radius:8px;color:#e2e8f0;z-index:60}
     header{position:sticky;top:0;z-index:50}
   </style>
 
-  <!-- ===== COMPACT SIGNALS MODE ===== -->
+  <!-- COMPACT SIGNALS -->
   <style>
     .signals-card{min-height:auto !important; padding:8px !important;}
     #signals{display:flex; flex-direction:column; gap:4px !important; margin:4px 0 !important;}
     .signal-line{
       font: 600 13px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      line-height: 1.2;
-      color:#e5e7eb;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      line-height: 1.2; color:#e5e7eb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .signal-line .when{color:#94a3b8; font-weight:500}
     .signal-line .pair{color:#a5b4fc; font-weight:700}
@@ -52,7 +48,7 @@
     .signals-card .bg-slate-900\/60{background:transparent !important;}
   </style>
 
-  <!-- ===== BIG SIGNAL LINE (INGRANDIMENTO TESTO LOG) ===== -->
+  <!-- BIG SIGNAL LINE -->
   <style>
     .signal-line{
       font-weight: 900 !important;
@@ -73,13 +69,63 @@
     #signals{ margin: 8px 0 !important; }
   </style>
 
+  <!-- DYNAMIC ADS VISIBILITY -->
+  <style>
+    /* Sidebar ads: sticky su desktop */
+    @media (min-width: 1024px){
+      aside.ads{
+        position: sticky;
+        top: 12px;             /* resta visibile quando scrolli */
+        align-self: start;
+        height: fit-content;
+      }
+    }
+
+    /* Slot wide sempre reattivi: mantieni margini quando si stringe */
+    .slot-wide{
+      width: 100%;
+      display: flex;
+      align-items: center; justify-content: center;
+      padding: 8px;
+    }
+
+    /* Floating ad su schermi piccoli: resta sempre visibile in basso
+       (non copre i pulsanti grazie al padding-bottom del body) */
+    @media (max-width: 1023px){
+      .floating-ad {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        z-index: 60;
+        background:#0f1420;
+        border:1px dashed #334155;
+        border-radius:1rem;
+        min-height: 80px;             /* più basso per mobile */
+        display:flex; align-items:center; justify-content:center;
+        color:#94a3b8; font-size:12px;
+        box-shadow: 0 8px 30px rgba(0,0,0,.45);
+      }
+      body.has-floating-ad{
+        padding-bottom: 110px; /* spazio per non coprire contenuti */
+      }
+      .floating-ad .close {
+        position:absolute; top:6px; right:8px;
+        background:#1f2937; border:1px solid #334155; color:#e5e7eb;
+        border-radius:8px; padding:2px 6px; font-size:11px; cursor:pointer;
+      }
+    }
+  </style>
+
 </head>
 <body class="min-h-screen">
 
   <header class="px-4 py-3 sticky top-0 z-50 backdrop-blur bg-black/50 border-b border-slate-800">
-     <div class="max-w-6xl mx-auto flex items-center gap-3 justify-between">
+    <div class="max-w-6xl mx-auto flex items-center gap-3 justify-between">
       <div class="flex items-center gap-3">
-        <a href="./" class="flex items-center gap-2 text-lg font-semibold"><img src="assets/logo.png" alt="logo" class="logo-img"><span class="ml-2 font-extrabold tracking-wide">X TRADER</span></a>
+        <a href="./" class="flex items-center gap-2 text-lg font-semibold">
+          <img src="assets/logo.png" alt="logo" class="logo-img"><span class="ml-2 font-extrabold tracking-wide">X TRADER</span>
+        </a>
         <nav class="hidden md:flex items-center gap-2">
           <a href="./" class="btn bg-slate-800/80" data-i18n="live_signals">Live signals</a>
           <a href="info.html" class="btn" data-i18n="info">Info</a>
@@ -105,7 +151,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
       <section class="lg:col-span-2 space-y-4">
-        <!-- >>> ADS SOPRA I SEGNALI -->
+        <!-- ADS SOPRA I SEGNALI -->
         <div class="slot-wide text-center">ADS 728×90 / 970×120</div>
 
         <div class="card signals-card rounded-2xl p-4">
@@ -117,12 +163,13 @@
           <p id="err" class="text-red-400 text-xs mt-1"></p>
         </div>
 
-        <!-- >>> ADS SOTTO I SEGNALI #1 -->
+        <!-- ADS SOTTO I SEGNALI #1 -->
         <div class="slot-wide text-center">ADS 728×90 / 970×120</div>
-        <!-- >>> ADS SOTTO I SEGNALI #2 (NUOVO) -->
+        <!-- ADS SOTTO I SEGNALI #2 -->
         <div class="slot-wide text-center">ADS 728×90 / 970×120</div>
       </section>
 
+      <!-- SIDEBAR ADS (sticky su desktop) -->
       <aside class="ads space-y-4">
         <div class="slot">ADS 300×250 #1</div>
         <div class="slot">ADS 300×250 #2</div>
@@ -145,8 +192,14 @@
     </div>
   </footer>
 
+  <!-- FLOATING AD (solo mobile/tablet) -->
+  <div id="mobileFloatingAd" class="floating-ad" style="display:none">
+    <button class="close" onclick="(function(){ localStorage.setItem('adClosed','1'); document.body.classList.remove('has-floating-ad'); document.getElementById('mobileFloatingAd').style.display='none'; })()">Chiudi ✕</button>
+    <div>ADS 320×100 / 320×50 (Mobile)</div>
+  </div>
+
   <!-- =========================
-       SCRIPT LETTURA SEGNALI (COMPATTO)
+       SCRIPT LETTURA SEGNALI
        ========================= -->
   <script>
     (function(){
@@ -154,6 +207,22 @@
       const elErr  = document.getElementById('err');
       const btn    = document.getElementById('refresh');
       const endpoints = ['/api/signal', '/.netlify/functions/signal'];
+
+      // Floating Ad logic (mostra su mobile se non chiuso)
+      function setupFloatingAd(){
+        const isDesktop = window.matchMedia('(min-width:1024px)').matches;
+        const closed = localStorage.getItem('adClosed') === '1';
+        const el = document.getElementById('mobileFloatingAd');
+        if (!isDesktop && !closed && el){
+          document.body.classList.add('has-floating-ad');
+          el.style.display = 'flex';
+        } else {
+          document.body.classList.remove('has-floating-ad');
+          if (el) el.style.display = 'none';
+        }
+      }
+      setupFloatingAd();
+      window.addEventListener('resize', setupFloatingAd);
 
       async function fetchFirstWorking() {
         for (const url of endpoints) {
@@ -172,7 +241,7 @@
           elList.innerHTML = `<div class="signal-line"><span class="when">Nessun segnale salvato</span></div>`;
           return;
         }
-        const when = new Date(data.at).toLocaleString();
+        const when = new Date(data.at).toLocaleString(undefined,{dateStyle:'short',timeStyle:'medium'});
         const sig  = String(data.signal||'hold').toLowerCase();
         const line = `
           <div class="signal-line">
@@ -201,6 +270,7 @@
     })();
   </script>
 
+  <!-- I TUOI SCRIPT ESISTENTI -->
   <script src="assets/js/i18n.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/fallback.js"></script>
