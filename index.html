@@ -17,10 +17,9 @@
     .btn{background:#1f2937;border:1px solid #334155;border-radius:12px;padding:8px 14px}
     .btn:hover{background:#334155}
     .logo-img{height:32px;width:auto}
-  .signals-card{min-height:420px}
-@media(min-width:768px){.signals-card{min-height:480px}}
+    .signals-card{min-height:420px}
+    @media(min-width:768px){.signals-card{min-height:480px}}
   </style>
-
 
   <style>
     #langSelect{background:#0f172a;border:1px solid #334155;border-radius:8px;color:#e2e8f0}
@@ -51,13 +50,13 @@
     </div>
   </header>
 
-  <section class="relative w-full border-b border-slate-800 overflow-visible" style="background:url(&#x27;assets/X_Trader_BANNER.png&#x27;) center 35%;">
-  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none"></div>
-  <div class="relative max-w-6xl mx-auto px-4 py-16 md:py-24 lg:py-28 min-h-[220px] flex flex-col justify-end">
-    <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold drop-shadow" data-i18n="live_banner" data-i18n="live_banner">Segnali crypto in tempo reale per BTC USDC</h1>
-    <p class="text-slate-200 mt-2 text-sm md:text-base" data-i18n="signals_note">Allineato ai 5 minuti con finestra di tolleranza.</p>
-  </div>
-</section>
+  <section class="relative w-full border-b border-slate-800 overflow-visible" style="background:url('assets/X_Trader_BANNER.png') center 35%;">
+    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none"></div>
+    <div class="relative max-w-6xl mx-auto px-4 py-16 md:py-24 lg:py-28 min-h-[220px] flex flex-col justify-end">
+      <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold drop-shadow" data-i18n="live_banner">Segnali crypto in tempo reale per BTC USDC</h1>
+      <p class="text-slate-200 mt-2 text-sm md:text-base" data-i18n="signals_note">Allineato ai 5 minuti con finestra di tolleranza.</p>
+    </div>
+  </section>
 
   <main class="max-w-6xl mx-auto p-4">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -83,7 +82,7 @@
   <footer class="mt-10 border-t border-slate-800">
     <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between gap-3">
       <div class="flex items-center gap-2 text-sm text-slate-400">
-        <a href="./" class="flex items-center gap-2 font-semibold text-slate-2 00"><img src="assets/logo.png" alt="logo" class="logo-img"></a>
+        <a href="./" class="flex items-center gap-2 font-semibold text-slate-200"><img src="assets/logo.png" alt="logo" class="logo-img"></a>
         <span>© X&nbsp;TRADER</span>
       </div>
       <nav class="flex items-center gap-3 text-sm">
@@ -95,9 +94,70 @@
     </div>
   </footer>
 
+  <!-- =========================
+       SCRIPT LETTURA SEGNALI
+       (INSERITO QUI, prima degli altri script)
+       ========================= -->
+  <script>
+    (function(){
+      const elList = document.getElementById('signals');
+      const elErr  = document.getElementById('err');
+      const btn    = document.getElementById('refresh');
 
+      // prima prova con /api/signal (se hai messo i redirect nel netlify.toml), altrimenti fallback
+      const endpoints = ['/api/signal', '/.netlify/functions/signal'];
 
+      async function fetchFirstWorking() {
+        for (const url of endpoints) {
+          try {
+            const r = await fetch(url, { cache: 'no-store' });
+            if (r.ok) return r.json();
+          } catch (_) {}
+        }
+        throw new Error('Nessun endpoint disponibile');
+      }
 
+      function render(data){
+        elErr.textContent = '';
+        elList.innerHTML = '';
+        if (!data) {
+          elList.innerHTML = `<div class="p-3 rounded-lg bg-slate-800/60 border border-slate-700 text-slate-300">Nessun segnale salvato</div>`;
+          return;
+        }
+        const when = new Date(data.at).toLocaleString();
+        const color = (data.signal||'hold').toLowerCase() === 'buy'
+          ? 'text-green-400'
+          : (data.signal||'hold').toLowerCase() === 'sell'
+            ? 'text-red-400'
+            : 'text-slate-300';
+
+        const card = `
+          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-700">
+            <div class="flex items-center justify-between">
+              <div class="text-sm text-slate-400">${when}</div>
+              <div class="text-xs px-2 py-1 rounded bg-slate-800 border border-slate-700">${data.pair || 'BTCUSDC'}</div>
+            </div>
+            <div class="mt-2 text-2xl font-extrabold ${color}">${String(data.signal || 'HOLD').toUpperCase()}</div>
+          </div>`;
+        elList.innerHTML = card;
+      }
+
+      async function loadSignal(){
+        try {
+          const data = await fetchFirstWorking();
+          render(data);
+        } catch (e) {
+          elErr.textContent = 'Errore lettura segnale';
+        }
+      }
+
+      btn?.addEventListener('click', loadSignal);
+      loadSignal();
+      setInterval(loadSignal, 5000);
+    })();
+  </script>
+
+  <!-- I TUOI SCRIPT ESISTENTI -->
   <script src="assets/js/i18n.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/fallback.js"></script>
