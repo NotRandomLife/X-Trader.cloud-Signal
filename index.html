@@ -28,9 +28,7 @@
     .wrap{max-width:1200px; margin:0 auto; padding:20px 16px 96px}
 
     /* header */
-    header{
-      display:grid; grid-template-columns:1fr auto; gap:16px; align-items:center; margin-bottom:18px;
-    }
+    header{display:grid; grid-template-columns:1fr auto; gap:16px; align-items:center; margin-bottom:18px}
     .brand{display:flex; align-items:center; gap:14px}
     .logo{width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,#033,#0b4);
       box-shadow:0 0 24px rgba(0,255,174,.25), inset 0 0 0 2px rgba(0,255,174,.35);
@@ -39,7 +37,7 @@
     .title{font-weight:800; font-size:1.2rem; letter-spacing:.5px}
     .subtitle{color:var(--sub); font-size:.9rem}
     .ad-728{width:728px; max-width:100%; height:90px; border-radius:14px; background:linear-gradient(180deg,var(--muted),#0b1118);
-      display:grid; place-items:center; box-shadow:var(--shadow); border:1px dashed rgba(0,255,174,.25);}
+      display:grid; place-items:center; box-shadow:var(--shadow); border:1px dashed rgba(0,255,174,.25)}
     .ad-728 small{color:#71fcd3}
 
     /* grid */
@@ -68,10 +66,9 @@
       padding:14px; border-radius:14px; border:1px solid rgba(255,255,255,.05)}
     .big-num{font-size:1.6rem; font-weight:800}
 
-    /* native ad box */
-    .native{background:linear-gradient(180deg,#0c131b,#0a121a); border:1px dashed rgba(0,255,174,.25);}
-    .native h4{margin:0 0 8px}
-    .native ul{margin:0; padding-left:18px}
+    /* ad boxes */
+    .ad-box{display:grid; place-items:center; min-height:250px; border-radius:14px; border:1px dashed rgba(0,255,174,.25); background:linear-gradient(180deg,#0c131b,#0a121a)}
+    .ad-note{color:#71fcd3; font-size:.85rem; opacity:.85}
 
     /* sticky footer ad */
     .sticky-ad{position:fixed; inset:auto 0 0 0; background:rgba(10,18,26,.9); backdrop-filter:blur(6px); border-top:1px solid rgba(255,255,255,.06);
@@ -96,9 +93,6 @@
     .row-actions{display:flex; gap:10px; justify-content:flex-end}
     .hidden{display:none}
     .ok{color:var(--ok)} .err{color:var(--danger)}
-
-    /* ad placeholders note */
-    .ad-note{color:#71fcd3; font-size:.85rem; opacity:.85}
   </style>
 </head>
 <body>
@@ -134,31 +128,30 @@
       <!-- Signals column -->
       <section class="card">
         <h3>📡 Segnali live</h3>
-        <div id="signals" class="signals">
-          <!-- le righe segnale verranno aggiunte via JS -->
-        </div>
+        <div id="signals" class="signals"><!-- popolato da JS --></div>
         <div class="mini" style="margin-top:12px">
           <div>⏱️ Prossimo segnale tra <strong id="countdown">--:--</strong></div>
           <div>🎯 Accuracy 7g: <strong id="acc7">—</strong></div>
         </div>
       </section>
 
-      <!-- History + Native Ad -->
+      <!-- LEFT SIDE: Ad al posto dello Storico -->
       <section class="side">
         <div class="card">
-          <h3>🧾 Storico rapido</h3>
-          <div id="history" class="signals"></div>
+          <h3>🪙 Sponsor</h3>
+          <div class="ad-box" style="height:320px">
+            <small class="ad-note">336×280 / 300×250 — Inserisci qui il codice Adsterra (Native Banner)</small>
+          </div>
         </div>
-        <div class="card native">
-          <h3>🔥 Consigli sponsorizzati</h3>
-          <div class="ad-note">Widget nativo (Adsterra/affiliazioni). Mantiene coerenza visuale.</div>
-          <div id="native-ad" style="margin-top:8px">
-            <!-- Inserisci qui il widget/iframe nativo -->
+        <div class="card">
+          <h3>📣 Skyscraper</h3>
+          <div class="ad-box" style="height:620px">
+            <small class="ad-note">300×600 — Skyscraper (Adsterra) — alta resa mentre l'utente attende</small>
           </div>
         </div>
       </section>
 
-      <!-- Crypto radar + side ad -->
+      <!-- RIGHT SIDE: Crypto radar + side ad -->
       <section class="side">
         <div class="card">
           <h3>📈 Crypto Radar</h3>
@@ -168,7 +161,6 @@
           <div class="mini"><span>Δ 24h</span> <span id="chg24">—</span></div>
         </div>
         <div class="card" style="min-height:200px; display:grid; place-items:center">
-          <!-- Side ad placement -->
           <div style="width:300px; height:250px; border-radius:12px; border:1px dashed rgba(0,255,174,.25); display:grid; place-items:center">
             <small class="ad-note">300×250 — Slot laterale (Adsterra)</small>
           </div>
@@ -221,24 +213,29 @@
     </div>
   </div>
 
-  <!-- Countdown & demo data + light helpers (no external deps) -->
+  <!-- Countdown + Fetch segnali REALI (configurabile) + helper -->
   <script>
-    // Countdown sincronizzato ai multipli di 5 minuti
+    // ===== CONFIG =====
+    const CONFIG = {
+      SIGNAL_API_URL: '/api/signals/latest', // <-- imposta il tuo endpoint reale (GET)
+      PAIR: 'BTCUSDC',
+      LIMIT: 12
+    };
+
+    // ===== COUNTDOWN sincronizzato ai multipli di 5 minuti =====
     const countdownEl = document.getElementById('countdown');
     function next5MinDate(){
       const d = new Date();
       const m = d.getMinutes();
       const add = 5 - (m % 5 || 5);
-      d.setSeconds(0,0);
-      d.setMinutes(m + add);
+      d.setSeconds(0,0); d.setMinutes(m + add);
       return d;
     }
     let target = next5MinDate();
     function tick(){
       const now = new Date();
       if(now >= target){ target = next5MinDate(); }
-      const ms = target - now;
-      const s = Math.max(0, Math.floor(ms/1000));
+      const s = Math.max(0, Math.floor((target - now)/1000));
       const mm = String(Math.floor(s/60)).padStart(2,'0');
       const ss = String(s%60).padStart(2,'0');
       countdownEl.textContent = mm+":"+ss;
@@ -246,26 +243,69 @@
     }
     tick();
 
-    // Demo: append finti segnali per preview UI (sostituisci con i tuoi fetch)
+    // ===== SEGNALI REALI =====
     const signalsEl = document.getElementById('signals');
-    const historyEl = document.getElementById('history');
-    function addSignal(ts, pair, action){
-      const row = document.createElement('div');
-      row.className = 'signal';
-      row.innerHTML = `<span class="sig-time">${ts}</span><span class="sig-pair">${pair}</span><span class="badge ${action}">${action}</span>`;
-      signalsEl.prepend(row);
-      const hist = row.cloneNode(true); historyEl.prepend(hist);
+
+    function fmtTime(input){
+      const d = (input instanceof Date) ? input : new Date(input);
+      if(isNaN(d)) return String(input);
+      const hh = String(d.getHours()).padStart(2,'0');
+      const mm = String(d.getMinutes()).padStart(2,'0');
+      const ss = String(d.getSeconds()).padStart(2,'0');
+      return `${hh}:${mm}:${ss}`;
     }
-    // iniziali
-    ['19:10','19:15','19:20','19:25'].forEach((t,i)=>{
-      const acts=['BUY','HOLD','SELL','HOLD'];
-      addSignal(`${t}:04`, 'BTCUSDC', acts[i]);
-    });
 
-    // Accuracy demo
-    document.getElementById('acc7').textContent = '92%';
+    function addRow(ts, pair, action){
+      const row = document.createElement('div');
+      const act = String(action||'').toUpperCase();
+      row.className = 'signal';
+      row.innerHTML = `<span class="sig-time">${fmtTime(ts)}</span><span class="sig-pair">${pair}</span><span class="badge ${act}">${act}</span>`;
+      signalsEl.prepend(row);
+      // mantieni massimo N righe
+      while(signalsEl.children.length > CONFIG.LIMIT){ signalsEl.lastElementChild.remove(); }
+    }
 
-    // Radar demo numeri
+    function normalizeSignals(data){
+      const raw = Array.isArray(data) ? data : (data.signals || data.data || data.result || (data ? [data] : []));
+      return raw.map(x=>({
+        ts: x.ts || x.timestamp || x.time || x.created_at || x.t,
+        pair: x.pair || x.symbol || x.asset || CONFIG.PAIR,
+        action: (x.action || x.signal || x.decision || '').toUpperCase()
+      })).filter(s=>s.ts && s.action);
+    }
+
+    async function fetchLatestSignals(){
+      const url = `${CONFIG.SIGNAL_API_URL}?pair=${encodeURIComponent(CONFIG.PAIR)}&limit=${CONFIG.LIMIT}&_=${Date.now()}`;
+      const res = await fetch(url, {cache:'no-store'});
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const data = await res.json();
+      return normalizeSignals(data);
+    }
+
+    async function refreshSignals(){
+      try{
+        const list = await fetchLatestSignals();
+        signalsEl.innerHTML = '';
+        // Visualizza dal più vecchio al più recente in alto
+        list.slice(-CONFIG.LIMIT).forEach(item=> addRow(item.ts, item.pair, item.action));
+      } catch(err){
+        console.warn('Signal fetch error:', err);
+      }
+    }
+
+    // Fetch immediato, poi allineato al prossimo slot da 5′
+    refreshSignals();
+    (function scheduleAligned(){
+      const now = new Date();
+      const next = next5MinDate();
+      const delay = Math.max(0, next - now) + 50; // piccolo margine
+      setTimeout(function(){
+        refreshSignals();
+        setInterval(refreshSignals, 5*60*1000);
+      }, delay);
+    })();
+
+    // ===== RADAR (demo numeri locali – sostituisci con il tuo feed prezzi) =====
     const priceEl = document.getElementById('price');
     const chg5 = document.getElementById('chg5');
     const chg1h = document.getElementById('chg1h');
@@ -278,6 +318,9 @@
       chg24.textContent = ((Math.random()*3-1.5).toFixed(2))+'%';
     }
     demoPrice(); setInterval(demoPrice, 4000);
+
+    // Accuracy demo
+    document.getElementById('acc7').textContent = '92%';
   </script>
 
   <!-- *** NON MODIFICARE: script di supporto fornito dall'utente *** -->
@@ -307,7 +350,7 @@
     "tr":{title:"Destekle iletişime geç",name:"Adın",email:"E-postan",message:"Mesaj",consent:"Belirttiğim e-posta üzerinden iletişime geçilmesine izin veriyorum.",send:"Gönder",cancel:"İptal",okTitle:"Gönderildi!",ok:"Teşekkürler — yakında yanıt vereceğiz.",err:"Tüm alanları doldur ve onayı kabul et."},
     "el":{title:"Επικοινωνία με υποστήριξη",name:"Το όνομά σου",email:"Το e-mail σου",message:"Μήνυμα",consent:"Συμφωνώ να επικοινωνήσουν μαζί μου στο e-mail.",send:"Αποστολή",cancel:"Ακύρωση",okTitle:"Εστάλη!",ok:"Ευχαριστούμε — θα απαντήσουμε σύντομα.",err:"Συμπλήρωσε όλα τα πεδία και αποδέξου τη συγκατάθεση."},
     "cs":{title:"Kontaktovat podporu",name:"Tvé jméno",email:"Tvůj e-mail",message:"Zpráva",consent:"Souhlasím s kontaktováním na uvedený e-mail.",send:"Odeslat",cancel:"Zrušit",okTitle:"Odesláno!",ok:"Díky — brzy odpovíme.",err:"Vyplň všechna pole a přijmi souhlas."},
-    "sk":{title:"Kontaktovať podporu",name:"Tvoje meno",email:"Tvoj e-mail",message:"Správa",consent:"Súhlasím s kontaktovaním na e-mail.",send:"Odoslať",cancel:"Zrušiť",okTitle:"Odoslané!",ok:"Ďakujeme — čoskoro odpovieme.",err:"Vyplň všetky polia a odsúhlas súhlas."},
+    "sk":{title:"Kontaktovať podporu",name:"Tvoje meno",email:"Tvoj e-mail",message:"Správa",consent:"Súhlasím s kontaktovaním na e-mail.",send:"Odoslať",cancel:"Zrušiť",okTitle:"Odoslané!",ok:"Ďakujeme — čoskoro odpovieme.",err:"Vyplň všetky polia i odsúhlas súhlas."},
     "hu":{title:"Kapcsolatfelvétel támogatással",name:"Neved",email:"E-mailed",message:"Üzenet",consent:"Hozzájárulok az e-mailes megkereséshez.",send:"Küldés",cancel:"Mégse",okTitle:"Elküldve!",ok:"Köszönjük — hamarosan válaszolunk.",err:"Töltsd ki az összes mezőt és fogadd el a hozzájárulást."},
     "ro":{title:"Contactează suportul",name:"Numele tău",email:"Emailul tău",message:"Mesaj",consent:"Sunt de acord să fiu contactat pe emailul furnizat.",send:"Trimite",cancel:"Anulează",okTitle:"Trimis!",ok:"Mulțumim — revenim curând.",err:"Completează toate câmpurile și acceptă consimțământul."},
     "bg":{title:"Свържи се с поддръжка",name:"Твоето име",email:"Твоят e-mail",message:"Съобщение",consent:"Съгласен/на съм да бъда потърсен/а по e-mail.",send:"Изпрати",cancel:"Откажи",okTitle:"Изпратено!",ok:"Благодарим — скоро ще отговорим.",err:"Попълни всички полета и приеми съгласието."},
@@ -315,7 +358,7 @@
     "hr":{title:"Kontaktiraj podršku",name:"Tvoje ime",email:"Tvoj e-mail",message:"Poruka",consent:"Slažem se na kontakt putem e-pošte.",send:"Pošalji",cancel:"Odustani",okTitle:"Poslano!",ok:"Hvala — ubrzo odgovaramo.",err:"Ispuni sva polja i prihvati privolu."},
     "sl":{title:"Kontaktiraj podporo",name:"Tvoje ime",email:"Tvoj e-poštni naslov",message:"Sporočilo",consent:"Strinjam se s stikom prek navedenega e-poštnega naslova.",send:"Pošlji",cancel:"Prekliči",okTitle:"Poslano!",ok:"Hvala — kmalu odgovorimo.",err:"Izpolni vsa polja in sprejmi soglasje."},
     "he":{title:"צור קשר עם התמיכה",name:"השם שלך",email:"האימייל שלך",message:"הודעה",consent:"אני מסכים/ה שיצרו איתי קשר למייל שסיפקתי.",send:"שלח",cancel:"ביטול",okTitle:"נשלח!",ok:"תודה — נחזור אליך בקרוב.",err:"מלא/י את כל השדות ואשר/י הסכמה."},
-    "ar":{title:"الاتصال بالدعم",name:"اسمك",email:"بريدك الإلكتروني",message:"الرسالة",consent:"أوافق على التواصل معي عبر البريد المذكور.",send:"إرسال",cancel:"إلغاء",okTitle:"تم الإرسال!",ok:"شكرًا — سنرد قريبًا.",err:"املأ جميع الحقول ووافق على الإقرار."},
+    "ar":{title:"الاتصال بالدعم",name:"اسمك",email:"بريدك الإلكتروني",message:"الرسالة",consent:"أوافق على التواصل معي عبر البريد المذكور.",send:"إرسال",cancel:"إلغاء",okTitle:"تم الإرسال!",ok:"شكرًا — سنرد قریبًا.",err:"املأ جميع الحقول ووافق على الإقرار."},
     "fa":{title:"ارتباط با پشتیبانی",name:"نام شما",email:"ایمیل شما",message:"پیام",consent:"موافقت می‌دهم از طریق ایمیل درج‌شده با من تماس بگیرند.",send:"ارسال",cancel:"لغو",okTitle:"ارسال شد!",ok:"متشکرم — به‌زودی پاسخ می‌دهیم.",err:"همه فیلدها را پر کرده و رضایت را بپذیرید."},
     "hi":{title:"सपोर्ट से संपर्क",name:"आपका नाम",email:"आपका ई-मेल",message:"संदेश",consent:"मैं दिए ई-मेल पर संपर्क के लिए सहमत हूँ।",send:"भेजें",cancel:"रद्द करें",okTitle:"भेज दिया!",ok:"धन्यवाद — हम जल्द जवाब देंगे।",err:"कृपया सभी फ़ील्ड भरें और सहमति दें।"},
     "bn":{title:"সাপোর্টে যোগাযোগ",name:"আপনার নাম",email:"আপনার ই-মেইল",message:"বার্তা",consent:"আমি প্রদত্ত ই-মেইলে যোগাযোগে সম্মত।",send:"পাঠান",cancel:"বাতিল",okTitle:"পাঠানো হয়েছে!",ok:"ধন্যবাদ — আমরা দ্রুত উত্তর দেব।",err:"সব ঘর পূরণ করুন এবং সম্মতি দিন।"},
