@@ -469,6 +469,69 @@
 
   <!-- I TUOI SCRIPT ESISTENTI -->
   <script src="assets/js/i18n.js"></script>
+  <!-- Patch i18n: forza "AI" nel banner in tutte le lingue -->
+  <script>
+    (function(){
+      const MAP = {
+        'it': 'Segnali AI crypto in tempo reale per BTC USDC',
+        'en': 'AI crypto signals in real time for BTC USDC',
+        'es': 'Señales cripto de IA en tiempo real para BTC USDC',
+        'fr': 'Signaux crypto IA en temps réel pour BTC USDC',
+        'de': 'KI‑Krypto‑Signale in Echtzeit für BTC USDC',
+        'pt': 'Sinais cripto de IA em tempo real para BTC USDC',
+        'pt-br': 'Sinais cripto de IA em tempo real para BTC USDC',
+        'ru': 'Крипто‑сигналы ИИ в реальном времени для BTC USDC',
+        'uk': 'Криптосигнали ШІ в реальному часі для BTC USDC',
+        'pl': 'Sygnały krypto AI w czasie rzeczywistym dla BTC USDC',
+        'nl': 'AI‑crypto‑signalen in realtime voor BTC USDC',
+        'sv': 'AI‑kryptosignaler i realtid för BTC USDC',
+        'no': 'AI‑kryptosignaler i sanntid for BTC USDC',
+        'da': 'AI‑kryptosignaler i realtid for BTC USDC',
+        'fi': 'AI‑kryptosignaalit reaaliajassa BTC USDC:lle',
+        'tr': 'Yapay zekâ kripto sinyalleri (AI) gerçek zamanlı — BTC USDC',
+        'el': 'Σήματα crypto ΤΝ σε πραγματικό χρόνο για BTC USDC',
+        'cs': 'Krypto signály AI v reálném čase pro BTC USDC',
+        'sk': 'Krypto signály AI v reálnom čase pre BTC USDC',
+        'hu': 'AI kripto jelek valós időben BTC USDC-hez',
+        'ro': 'Semnale cripto IA în timp real pentru BTC USDC',
+        'bg': 'Крипто сигнали ИИ в реално време за BTC USDC',
+        'sr': 'Крипто сигнали АИ у реалном времену за BTC USDC',
+        'hr': 'AI kripto signali u stvarnom vremenu za BTC USDC',
+        'sl': 'AI kripto signali v realnem času za BTC USDC',
+        'he': 'אותות קריפטו בינה מלאכותית בזמן אמת עבור BTC USDC',
+        'ar': 'إشارات كريبتو بالذكاء الاصطناعي في الوقت الفعلي لـ BTC USDC',
+        'fa': 'سیگنال‌های کریپتوِ هوش مصنوعی به‌صورت زنده برای BTC USDC',
+        'hi': 'एआई क्रिप्टो सिग्नल रियल‑टाइम में — BTC USDC',
+        'bn': 'এআই ক্রিপ্টো সিগন্যাল রিয়েল‑টাইমে — BTC USDC',
+        'ur': 'اے آئی کرپٹو سگنلز براہِ راست — BTC USDC',
+        'zh-cn': 'AI 加密信号 实时用于 BTC USDC',
+        'zh-tw': 'AI 加密訊號 即時用於 BTC USDC',
+        'ja': 'AI クリプトシグナルをリアルタイムで — BTC USDC',
+        'ko': 'AI 암호화 신호 실시간 제공 — BTC USDC',
+        'th': 'สัญญาณคริปโต AI แบบเรียลไทม์สำหรับ BTC USDC',
+        'vi': 'Tín hiệu Crypto AI thời gian thực cho BTC USDC',
+        'id': 'Sinyal kripto AI real‑time untuk BTC USDC',
+        'ms': 'Isyarat kripto AI masa nyata untuk BTC USDC',
+        'fil': 'AI crypto signals real‑time para sa BTC USDC'
+      };
+      function getKey(){
+        let l = (document.getElementById('langSelect')?.value) || navigator.language || 'en';
+        l = l.toLowerCase();
+        if(!MAP[l]) l = l.split('-')[0];
+        if(!MAP[l]) l = 'en';
+        return l;
+      }
+      function applyBanner(){
+        const el = document.querySelector('[data-i18n="live_banner"]');
+        if (el) el.textContent = MAP[getKey()];
+      }
+      document.getElementById('langSelect')?.addEventListener('change', applyBanner);
+      document.addEventListener('DOMContentLoaded', applyBanner);
+      // safety: re-apply after i18n.js potentially re-renders
+      setTimeout(applyBanner, 50);
+      setTimeout(applyBanner, 200);
+    })();
+  </script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/fallback.js"></script>
 
