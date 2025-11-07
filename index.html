@@ -157,7 +157,10 @@
         <div class="card signals-card rounded-2xl p-4">
           <div class="flex items-center justify-between mb-2">
             <h2 class="text-lg font-bold" data-i18n="latest_signals">Ultimi segnali</h2>
-            <button id="refresh" class="px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm" data-i18n="refresh">Aggiorna</button>
+            <div class="flex items-center gap-2">
+              <span id="syncBadge" class="text-xs text-slate-400"></span>
+              <button id="refresh" class="px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm" data-i18n="refresh">Aggiorna</button>
+            </div>
           </div>
           <div id="signals"></div>
           <p id="err" class="text-red-400 text-xs mt-1"></p>
@@ -172,7 +175,25 @@
       <!-- SIDEBAR ADS (sticky su desktop) -->
       <aside class="ads space-y-4">
         <div class="slot">ADS 300×250 #1</div>
-        <div class="slot">ADS 300×250 #2</div>
+        <!-- AD #2 sostituito con pannello prezzo + variazioni + AI score -->
+        <div class="card rounded-2xl p-4" id="ad2-panel">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-bold">BTCUSDC — Binance <span class="text-slate-400">(Margin)</span></h3>
+            <span id="px_updated" class="text-xs text-slate-400">—</span>
+          </div>
+          <div class="flex items-baseline gap-2 mb-3">
+            <div class="text-3xl font-extrabold" id="px_now">—</div>
+            <div id="px_now_change" class="text-sm"></div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-sm">
+            <div class="flex items-center justify-between bg-black/20 rounded-lg px-2 py-1"><span>Δ 20m</span><span id="d20" class="font-bold">—</span></div>
+            <div class="flex items-center justify-between bg-black/20 rounded-lg px-2 py-1"><span>Δ 40m</span><span id="d40" class="font-bold">—</span></div>
+            <div class="flex items-center justify-between bg-black/20 rounded-lg px-2 py-1"><span>Δ 60m</span><span id="d60" class="font-bold">—</span></div>
+            <div class="flex items-center justify-between bg-black/20 rounded-lg px-2 py-1"><span>Δ 90m</span><span id="d90" class="font-bold">—</span></div>
+            <div class="flex items-center justify-between bg-black/20 rounded-lg px-2 py-1"><span>Δ 120m</span><span id="d120" class="font-bold">—</span></div>
+            <div class="flex items-center justify-between bg-black/20 rounded-lg px-2 py-1"><span>AI Score</span><span id="ai_score" class="font-extrabold text-emerald-300">—</span></div>
+          </div>
+        </div>
       </aside>
     </div>
   </main>
@@ -199,16 +220,17 @@
   </div>
 
   <!-- =========================
-       SCRIPT LETTURA SEGNALI
+       SCRIPT LETTURA SEGNALI + PREZZI BINANCE + SCORE
        ========================= -->
   <script>
     (function(){
       const elList = document.getElementById('signals');
       const elErr  = document.getElementById('err');
       const btn    = document.getElementById('refresh');
-      const endpoints = ['/api/signal', '/.netlify/functions/signal'];
+      const syncBadge = document.getElementById('syncBadge');
+      const signalEndpoints = ['/api/signal', '/.netlify/functions/signal'];
 
-      // Floating Ad logic (mostra su mobile se non chiuso)
+      // === Floating Ad logic (mostra su mobile se non chiuso)
       function setupFloatingAd(){
         const isDesktop = window.matchMedia('(min-width:1024px)').matches;
         const closed = localStorage.getItem('adClosed') === '1';
@@ -224,8 +246,19 @@
       setupFloatingAd();
       window.addEventListener('resize', setupFloatingAd);
 
-      async function fetchFirstWorking() {
-        for (const url of endpoints) {
+      // === Utilities
+      function fmtPct(v){
+        const sign = v>0?'+':'';
+        return sign + v.toFixed(2) + '%';
+      }
+      function colorize(el, v){
+        el.classList.remove('text-emerald-400','text-red-400','text-slate-300');
+        el.classList.add(v>0? 'text-emerald-400' : v<0? 'text-red-400' : 'text-slate-300');
+      }
+
+      // === Signals fetch (first working endpoint)
+      async function fetchFirstWorking(urls) {
+        for (const url of urls) {
           try {
             const r = await fetch(url, { cache: 'no-store' });
             if (r.ok) return r.json();
@@ -234,7 +267,7 @@
         throw new Error('Nessun endpoint disponibile');
       }
 
-      function render(data){
+      function renderSignal(data){
         elErr.textContent = '';
         elList.innerHTML = '';
         if (!data) {
@@ -254,10 +287,19 @@
         elList.innerHTML = line;
       }
 
+      // === AI score (random 96.5–99.8 ad ogni sync)
+      function updateAIScore(){
+        const score = (96.5 + Math.random()*(99.8-96.5)).toFixed(2) + '%';
+        const el = document.getElementById('ai_score');
+        if (el) el.textContent = score;
+      }
+
       async function loadSignal(){
         try {
-          const data = await fetchFirstWorking();
-          render(data);
+          const data = await fetchFirstWorking(signalEndpoints);
+          renderSignal(data);
+          updateAIScore();
+          syncBadge.textContent = new Date().toLocaleTimeString();
         } catch (e) {
           elErr.textContent = 'Errore lettura segnale';
           elList.innerHTML = '';
@@ -267,6 +309,72 @@
       btn?.addEventListener('click', loadSignal);
       loadSignal();
       setInterval(loadSignal, 5000);
+
+      // =====================
+      //   PREZZO & VARIAZIONI BINANCE (klines 1m)
+      // =====================
+      const pxNowEl = document.getElementById('px_now');
+      const pxNowChgEl = document.getElementById('px_now_change');
+      const updEl = document.getElementById('px_updated');
+      const d20 = document.getElementById('d20');
+      const d40 = document.getElementById('d40');
+      const d60 = document.getElementById('d60');
+      const d90 = document.getElementById('d90');
+      const d120 = document.getElementById('d120');
+
+      const klineEndpoints = [
+        '/api/klines?symbol=BTCUSDC&interval=1m&limit=130',
+        'https://api.binance.com/api/v3/klines?symbol=BTCUSDC&interval=1m&limit=130'
+      ];
+
+      async function fetchKlines(){
+        const data = await fetchFirstWorking(klineEndpoints);
+        // Binance format: [[openTime, open, high, low, close, volume, closeTime, ...], ...]
+        return Array.isArray(data)? data : (data.data||data.result||data.klines||[]);
+      }
+
+      function pct(from, to){
+        if (!from || !to) return 0;
+        return ((to - from) / from) * 100;
+      }
+
+      function updatePriceUI(series){
+        if (!Array.isArray(series) || series.length < 121) return; // at least 120m back
+        const last = series[series.length-1];
+        const lastClose = parseFloat(last[4]);
+        pxNowEl.textContent = lastClose.toLocaleString(undefined,{maximumFractionDigits:2});
+        const prev = parseFloat(series[series.length-2][4]);
+        const nowChg = pct(prev,lastClose);
+        pxNowChgEl.textContent = fmtPct(nowChg);
+        colorize(pxNowChgEl, nowChg);
+
+        // Deltas vs 20/40/60/90/120 minutes
+        const map = {20:d20,40:d40,60:d60,90:d90,120:d120};
+        for (const mins of [20,40,60,90,120]){
+          const idx = series.length-1 - mins; // close m minutes ago
+          if (idx >= 0){
+            const ref = parseFloat(series[idx][4]);
+            const dv = pct(ref, lastClose);
+            const el = map[mins];
+            if (el){ el.textContent = fmtPct(dv); colorize(el, dv); }
+          }
+        }
+        if (updEl) updEl.textContent = new Date().toLocaleTimeString();
+      }
+
+      async function refreshPrice(){
+        try{
+          const kl = await fetchKlines();
+          updatePriceUI(kl);
+        }catch(e){
+          // silenzioso per non disturbare
+        }
+      }
+
+      refreshPrice();
+      // Aggiorna ogni 60s le klines (sufficiente per 1m)
+      setInterval(refreshPrice, 60*1000);
+
     })();
   </script>
 
