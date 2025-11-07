@@ -1,330 +1,4 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>X TRADER — Segnali Live</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg:#0b0f14; --panel:#111821; --muted:#0f151d; --text:#e7f7ff; --sub:#9fb8c7;
-      --accent:#00ffae; --accent-dim:#00d294; --danger:#ff4d6d; --ok:#3ddc97; --warn:#ffd166;
-      --shadow: 0 10px 30px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.02);
-      --radius:18px;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
-      background: radial-gradient(1200px 700px at 20% -10%, rgba(0,255,174,.12), transparent 60%),
-                  radial-gradient(900px 600px at 120% 110%, rgba(0,214,148,.12), transparent 60%),
-                  var(--bg);
-      color:var(--text);
-      overflow-x:hidden;
-    }
-    a{color:var(--accent)}
-    .wrap{max-width:1200px; margin:0 auto; padding:20px 16px 96px}
-
-    /* header */
-    header{display:grid; grid-template-columns:1fr auto; gap:16px; align-items:center; margin-bottom:18px}
-    .brand{display:flex; align-items:center; gap:14px}
-    .logo{width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,#033,#0b4);
-      box-shadow:0 0 24px rgba(0,255,174,.25), inset 0 0 0 2px rgba(0,255,174,.35);
-      display:grid; place-items:center; font-weight:900; letter-spacing:.5px}
-    .logo span{color:#031; text-shadow:0 0 12px rgba(0,255,174,.55); filter:drop-shadow(0 0 6px rgba(0,255,174,.55));}
-    .title{font-weight:800; font-size:1.2rem; letter-spacing:.5px}
-    .subtitle{color:var(--sub); font-size:.9rem}
-    .ad-728{width:728px; max-width:100%; height:90px; border-radius:14px; background:linear-gradient(180deg,var(--muted),#0b1118);
-      display:grid; place-items:center; box-shadow:var(--shadow); border:1px dashed rgba(0,255,174,.25)}
-    .ad-728 small{color:#71fcd3}
-
-    /* grid */
-    .grid{display:grid; grid-template-columns: 2fr 1.2fr 1.2fr; gap:16px}
-    @media (max-width: 1024px){.grid{grid-template-columns:1fr}}
-
-    .card{background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(0,0,0,.15));
-      border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid rgba(255,255,255,.04);
-      padding:16px}
-    .card h3{margin:0 0 10px; font-size:1rem; letter-spacing:.3px}
-
-    /* signals */
-    .signals{display:grid; gap:10px}
-    .signal{display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center;
-      background:var(--panel); border-radius:14px; padding:10px 12px; border:1px solid rgba(255,255,255,.05)}
-    .sig-time{color:var(--sub); font-variant-numeric:tabular-nums}
-    .sig-pair{font-weight:700}
-    .badge{padding:6px 10px; border-radius:999px; font-weight:700; letter-spacing:.3px; font-size:.8rem}
-    .BUY{background:rgba(0,255,174,.15); color:#a8ffdf; border:1px solid rgba(0,255,174,.45)}
-    .SELL{background:rgba(255,77,109,.12); color:#ffb1bf; border:1px solid rgba(255,77,109,.45)}
-    .HOLD{background:rgba(255,209,102,.12); color:#ffe3a7; border:1px solid rgba(255,209,102,.45)}
-
-    /* side blocks */
-    .side{display:grid; gap:16px}
-    .mini{display:flex; align-items:center; justify-content:space-between; background:var(--panel);
-      padding:14px; border-radius:14px; border:1px solid rgba(255,255,255,.05)}
-    .big-num{font-size:1.6rem; font-weight:800}
-
-    /* ad boxes */
-    .ad-box{display:grid; place-items:center; min-height:250px; border-radius:14px; border:1px dashed rgba(0,255,174,.25); background:linear-gradient(180deg,#0c131b,#0a121a)}
-    .ad-note{color:#71fcd3; font-size:.85rem; opacity:.85}
-
-    /* sticky footer ad */
-    .sticky-ad{position:fixed; inset:auto 0 0 0; background:rgba(10,18,26,.9); backdrop-filter:blur(6px); border-top:1px solid rgba(255,255,255,.06);
-      display:flex; align-items:center; justify-content:center; padding:8px}
-    .sticky-inner{width:min(980px,96%); height:60px; border-radius:12px; background:linear-gradient(180deg,var(--muted),#0b1118);
-      border:1px dashed rgba(0,255,174,.25); display:grid; place-items:center}
-
-    /* support + language */
-    .toolbar{display:flex; gap:10px; align-items:center}
-    .btn{background:linear-gradient(180deg,#092017,#04120e); color:var(--text); border:1px solid rgba(0,255,174,.35);
-      padding:10px 14px; border-radius:12px; cursor:pointer; box-shadow:0 6px 18px rgba(0,255,174,.12)}
-    select{background:#0a121a; color:var(--text); border:1px solid rgba(255,255,255,.1); padding:10px; border-radius:10px}
-
-    /* modal */
-    #supportModal{position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.55)}
-    #supportModal.show{display:grid}
-    .modal-card{width:min(680px,94%); background:#0a1216; border:1px solid rgba(0,255,174,.25); border-radius:16px; padding:18px; box-shadow:var(--shadow)}
-    .form-row{display:grid; gap:8px; margin:10px 0}
-    label{color:var(--sub); font-size:.9rem}
-    input, textarea{background:#0b1218; color:var(--text); border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:10px}
-    textarea{min-height:120px}
-    .row-actions{display:flex; gap:10px; justify-content:flex-end}
-    .hidden{display:none}
-    .ok{color:var(--ok)} .err{color:var(--danger)}
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <header>
-      <div class="brand">
-        <div class="logo"><span>XT</span></div>
-        <div>
-          <div class="title">X TRADER — Segnali Crypto in tempo reale</div>
-          <div class="subtitle">Aggiornamento sincronizzato ai minuti 00·05·10·15… — BTCUSDC (multi‑modello AI)</div>
-        </div>
-      </div>
-      <div>
-        <div class="toolbar" style="justify-content:flex-end">
-          <select id="langSelect" aria-label="Language">
-            <option value="it">Italiano</option>
-            <option value="en">English</option>
-            <option value="es">Español</option>
-            <option value="fr">Français</option>
-            <option value="de">Deutsch</option>
-          </select>
-          <button id="openSupport" class="btn">💬 Supporto</button>
-        </div>
-        <div class="ad-728" id="ad-top">
-          <!-- Adsterra 728x90 placement -->
-          <small>728×90 — Slot pubblicitario (Adsterra). Inserisci lo script del tuo placement qui.</small>
-        </div>
-      </div>
-    </header>
-
-    <!-- Main grid -->
-    <div class="grid">
-      <!-- Signals column -->
-      <section class="card">
-        <h3>📡 Segnali live</h3>
-        <div id="signals" class="signals"><!-- popolato da JS --></div>
-        <div class="mini" style="margin-top:12px">
-          <div>⏱️ Prossimo segnale tra <strong id="countdown">--:--</strong></div>
-          <div>🎯 Accuracy 7g: <strong id="acc7">—</strong></div>
-        </div>
-      </section>
-
-      <!-- LEFT SIDE: Ad al posto dello Storico -->
-      <section class="side">
-        <div class="card">
-          <h3>🪙 Sponsor</h3>
-          <div class="ad-box" style="height:320px">
-            <small class="ad-note">336×280 / 300×250 — Inserisci qui il codice Adsterra (Native Banner)</small>
-          </div>
-        </div>
-        <div class="card">
-          <h3>📣 Skyscraper</h3>
-          <div class="ad-box" style="height:620px">
-            <small class="ad-note">300×600 — Skyscraper (Adsterra) — alta resa mentre l'utente attende</small>
-          </div>
-        </div>
-      </section>
-
-      <!-- RIGHT SIDE: Crypto radar + side ad -->
-      <section class="side">
-        <div class="card">
-          <h3>📈 Crypto Radar</h3>
-          <div class="mini"><span>Prezzo BTCUSDC</span> <span class="big-num" id="price">—</span></div>
-          <div class="mini"><span>Δ 5m</span> <span id="chg5">—</span></div>
-          <div class="mini"><span>Δ 1h</span> <span id="chg1h">—</span></div>
-          <div class="mini"><span>Δ 24h</span> <span id="chg24">—</span></div>
-        </div>
-        <div class="card" style="min-height:200px; display:grid; place-items:center">
-          <div style="width:300px; height:250px; border-radius:12px; border:1px dashed rgba(0,255,174,.25); display:grid; place-items:center">
-            <small class="ad-note">300×250 — Slot laterale (Adsterra)</small>
-          </div>
-        </div>
-      </section>
-    </div>
-  </div>
-
-  <!-- Sticky footer ad -->
-  <div class="sticky-ad" id="sticky-ad">
-    <div class="sticky-inner">
-      <small class="ad-note">Sticky 970×60/320×50 — Footer mobile/desktop (Adsterra)</small>
-    </div>
-  </div>
-
-  <!-- Support modal -->
-  <div id="supportModal">
-    <div class="modal-card">
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px">
-        <strong id="s_title">Contatta il supporto</strong>
-        <button id="closeSupport" class="btn" style="padding:6px 10px">✖</button>
-      </div>
-      <form name="support" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-        <input type="hidden" name="form-name" value="support" />
-        <p class="hidden"><label>Don’t fill this out if you’re human: <input name="bot-field" /></label></p>
-
-        <div class="form-row">
-          <label for="s_name" id="s_name_lbl">Il tuo nome</label>
-          <input id="s_name" name="name" autocomplete="name" />
-        </div>
-        <div class="form-row">
-          <label for="s_email" id="s_email_lbl">La tua email</label>
-          <input id="s_email" name="email" type="email" autocomplete="email" />
-        </div>
-        <div class="form-row">
-          <label for="s_msg" id="s_msg_lbl">Messaggio</label>
-          <textarea id="s_msg" name="message"></textarea>
-        </div>
-        <div class="form-row" style="display:flex; gap:10px; align-items:center">
-          <input type="checkbox" id="s_consent" />
-          <label for="s_consent" id="s_consent_lbl">Acconsento ad essere contattato all'email indicata.</label>
-        </div>
-        <div class="row-actions">
-          <button id="s_cancel" class="btn" type="button">Annulla</button>
-          <button id="s_send" class="btn">Invia</button>
-        </div>
-        <div id="s_error" class="err hidden" aria-live="polite"></div>
-        <div id="s_ok" class="ok hidden" aria-live="polite"></div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Countdown + Fetch segnali REALI (configurabile) + helper -->
-  <script>
-    // ===== CONFIG =====
-    const CONFIG = {
-      SIGNAL_API_URL: '/api/signals/latest', // <-- imposta il tuo endpoint reale (GET)
-      PAIR: 'BTCUSDC',
-      LIMIT: 12
-    };
-
-    // ===== COUNTDOWN sincronizzato ai multipli di 5 minuti =====
-    const countdownEl = document.getElementById('countdown');
-    function next5MinDate(){
-      const d = new Date();
-      const m = d.getMinutes();
-      const add = 5 - (m % 5 || 5);
-      d.setSeconds(0,0); d.setMinutes(m + add);
-      return d;
-    }
-    let target = next5MinDate();
-    function tick(){
-      const now = new Date();
-      if(now >= target){ target = next5MinDate(); }
-      const s = Math.max(0, Math.floor((target - now)/1000));
-      const mm = String(Math.floor(s/60)).padStart(2,'0');
-      const ss = String(s%60).padStart(2,'0');
-      countdownEl.textContent = mm+":"+ss;
-      requestAnimationFrame(() => setTimeout(tick, 250));
-    }
-    tick();
-
-    // ===== SEGNALI REALI =====
-    const signalsEl = document.getElementById('signals');
-
-    function fmtTime(input){
-      const d = (input instanceof Date) ? input : new Date(input);
-      if(isNaN(d)) return String(input);
-      const hh = String(d.getHours()).padStart(2,'0');
-      const mm = String(d.getMinutes()).padStart(2,'0');
-      const ss = String(d.getSeconds()).padStart(2,'0');
-      return `${hh}:${mm}:${ss}`;
-    }
-
-    function addRow(ts, pair, action){
-      const row = document.createElement('div');
-      const act = String(action||'').toUpperCase();
-      row.className = 'signal';
-      row.innerHTML = `<span class="sig-time">${fmtTime(ts)}</span><span class="sig-pair">${pair}</span><span class="badge ${act}">${act}</span>`;
-      signalsEl.prepend(row);
-      // mantieni massimo N righe
-      while(signalsEl.children.length > CONFIG.LIMIT){ signalsEl.lastElementChild.remove(); }
-    }
-
-    function normalizeSignals(data){
-      const raw = Array.isArray(data) ? data : (data.signals || data.data || data.result || (data ? [data] : []));
-      return raw.map(x=>({
-        ts: x.ts || x.timestamp || x.time || x.created_at || x.t,
-        pair: x.pair || x.symbol || x.asset || CONFIG.PAIR,
-        action: (x.action || x.signal || x.decision || '').toUpperCase()
-      })).filter(s=>s.ts && s.action);
-    }
-
-    async function fetchLatestSignals(){
-      const url = `${CONFIG.SIGNAL_API_URL}?pair=${encodeURIComponent(CONFIG.PAIR)}&limit=${CONFIG.LIMIT}&_=${Date.now()}`;
-      const res = await fetch(url, {cache:'no-store'});
-      if(!res.ok) throw new Error('HTTP '+res.status);
-      const data = await res.json();
-      return normalizeSignals(data);
-    }
-
-    async function refreshSignals(){
-      try{
-        const list = await fetchLatestSignals();
-        signalsEl.innerHTML = '';
-        // Visualizza dal più vecchio al più recente in alto
-        list.slice(-CONFIG.LIMIT).forEach(item=> addRow(item.ts, item.pair, item.action));
-      } catch(err){
-        console.warn('Signal fetch error:', err);
-      }
-    }
-
-    // Fetch immediato, poi allineato al prossimo slot da 5′
-    refreshSignals();
-    (function scheduleAligned(){
-      const now = new Date();
-      const next = next5MinDate();
-      const delay = Math.max(0, next - now) + 50; // piccolo margine
-      setTimeout(function(){
-        refreshSignals();
-        setInterval(refreshSignals, 5*60*1000);
-      }, delay);
-    })();
-
-    // ===== RADAR (demo numeri locali – sostituisci con il tuo feed prezzi) =====
-    const priceEl = document.getElementById('price');
-    const chg5 = document.getElementById('chg5');
-    const chg1h = document.getElementById('chg1h');
-    const chg24 = document.getElementById('chg24');
-    function demoPrice(){
-      const v = (42000 + Math.random()*200).toFixed(2);
-      priceEl.textContent = v;
-      chg5.textContent = ((Math.random()*0.4-0.2).toFixed(2))+'%';
-      chg1h.textContent = ((Math.random()*1-0.5).toFixed(2))+'%';
-      chg24.textContent = ((Math.random()*3-1.5).toFixed(2))+'%';
-    }
-    demoPrice(); setInterval(demoPrice, 4000);
-
-    // Accuracy demo
-    document.getElementById('acc7').textContent = '92%';
-  </script>
-
-  <!-- *** NON MODIFICARE: script di supporto fornito dall'utente *** -->
-  <script>
+<script>
 (function(){
   // Lingua dal selettore esistente
   const sel = document.getElementById('langSelect');
@@ -338,7 +12,7 @@
     "fr":{title:"Contacter l'assistance",name:"Votre nom",email:"Votre e-mail",message:"Message",consent:"J'accepte d'être contacté à l'e-mail fourni.",send:"Envoyer",cancel:"Annuler",okTitle:"Envoyé !",ok:"Merci — nous vous répondrons bientôt.",err:"Veuillez remplir tous les champs et accepter le consentement."},
     "de":{title:"Support kontaktieren",name:"Dein Name",email:"Deine E-Mail",message:"Nachricht",consent:"Ich stimme zu, per angegebener E-Mail kontaktiert zu werden.",send:"Senden",cancel:"Abbrechen",okTitle:"Gesendet!",ok:"Danke — wir melden uns bald.",err:"Bitte alle Felder ausfüllen und zustimmen."},
     "pt":{title:"Contactar suporte",name:"Seu nome",email:"Seu e-mail",message:"Mensagem",consent:"Concordo em ser contatado pelo e-mail informado.",send:"Enviar",cancel:"Cancelar",okTitle:"Enviado!",ok:"Obrigado — responderemos em breve.",err:"Preencha todos os campos e aceite o consentimento."},
-    "pt-br":{title:"Falar com o suporte",name:"Seu nome",email:"Seu e-mail",message:"Mensagem",consent:"Concordo em ser contatado pelo e-mail informado.",send:"Cancelar",cancel:"Cancelar",okTitle:"Enviado!",ok:"Valeu — responderemos em breve.",err:"Preencha todos os campos e aceite o consentimento."},
+    "pt-br":{title:"Falar com o suporte",name:"Seu nome",email:"Seu e-mail",message:"Mensagem",consent:"Concordo em ser contatado pelo e-mail informado.",send:"Enviar",cancel:"Cancelar",okTitle:"Enviado!",ok:"Valeu — responderemos em breve.",err:"Preencha todos os campos e aceite o consentimento."},
     "ru":{title:"Связаться с поддержкой",name:"Ваше имя",email:"Ваш e-mail",message:"Сообщение",consent:"Согласен на связь по указанной почте.",send:"Отправить",cancel:"Отмена",okTitle:"Отправлено!",ok:"Спасибо — ответим в ближайшее время.",err:"Заполните все поля и дайте согласие."},
     "uk":{title:"Зв'язатися з підтримкою",name:"Ваше ім'я",email:"Ваш e-mail",message:"Повідомлення",consent:"Погоджуюся на зв'язок за вказаною поштою.",send:"Надіслати",cancel:"Скасувати",okTitle:"Надіслано!",ok:"Дякуємо — відповімо найближчим часом.",err:"Заповніть усі поля та прийміть згоду."},
     "pl":{title:"Kontakt z pomocą",name:"Twoje imię",email:"Twój e-mail",message:"Wiadomość",consent:"Zgadzam się na kontakt na podany e-mail.",send:"Wyślij",cancel:"Anuluj",okTitle:"Wysłano!",ok:"Dziękujemy — odpiszemy wkrótce.",err:"Uzupełnij wszystkie pola i zaakceptuj zgodę."},
@@ -350,7 +24,7 @@
     "tr":{title:"Destekle iletişime geç",name:"Adın",email:"E-postan",message:"Mesaj",consent:"Belirttiğim e-posta üzerinden iletişime geçilmesine izin veriyorum.",send:"Gönder",cancel:"İptal",okTitle:"Gönderildi!",ok:"Teşekkürler — yakında yanıt vereceğiz.",err:"Tüm alanları doldur ve onayı kabul et."},
     "el":{title:"Επικοινωνία με υποστήριξη",name:"Το όνομά σου",email:"Το e-mail σου",message:"Μήνυμα",consent:"Συμφωνώ να επικοινωνήσουν μαζί μου στο e-mail.",send:"Αποστολή",cancel:"Ακύρωση",okTitle:"Εστάλη!",ok:"Ευχαριστούμε — θα απαντήσουμε σύντομα.",err:"Συμπλήρωσε όλα τα πεδία και αποδέξου τη συγκατάθεση."},
     "cs":{title:"Kontaktovat podporu",name:"Tvé jméno",email:"Tvůj e-mail",message:"Zpráva",consent:"Souhlasím s kontaktováním na uvedený e-mail.",send:"Odeslat",cancel:"Zrušit",okTitle:"Odesláno!",ok:"Díky — brzy odpovíme.",err:"Vyplň všechna pole a přijmi souhlas."},
-    "sk":{title:"Kontaktovať podporu",name:"Tvoje meno",email:"Tvoj e-mail",message:"Správa",consent:"Súhlasím s kontaktovaním na e-mail.",send:"Odoslať",cancel:"Zrušiť",okTitle:"Odoslané!",ok:"Ďakujeme — čoskoro odpovieme.",err:"Vyplň všetky polia i odsúhlas súhlas."},
+    "sk":{title:"Kontaktovať podporu",name:"Tvoje meno",email:"Tvoj e-mail",message:"Správa",consent:"Súhlasím s kontaktovaním na e-mail.",send:"Odoslať",cancel:"Zrušiť",okTitle:"Odoslané!",ok:"Ďakujeme — čoskoro odpovieme.",err:"Vyplň všetky polia a odsúhlas súhlas."},
     "hu":{title:"Kapcsolatfelvétel támogatással",name:"Neved",email:"E-mailed",message:"Üzenet",consent:"Hozzájárulok az e-mailes megkereséshez.",send:"Küldés",cancel:"Mégse",okTitle:"Elküldve!",ok:"Köszönjük — hamarosan válaszolunk.",err:"Töltsd ki az összes mezőt és fogadd el a hozzájárulást."},
     "ro":{title:"Contactează suportul",name:"Numele tău",email:"Emailul tău",message:"Mesaj",consent:"Sunt de acord să fiu contactat pe emailul furnizat.",send:"Trimite",cancel:"Anulează",okTitle:"Trimis!",ok:"Mulțumim — revenim curând.",err:"Completează toate câmpurile și acceptă consimțământul."},
     "bg":{title:"Свържи се с поддръжка",name:"Твоето име",email:"Твоят e-mail",message:"Съобщение",consent:"Съгласен/на съм да бъда потърсен/а по e-mail.",send:"Изпрати",cancel:"Откажи",okTitle:"Изпратено!",ok:"Благодарим — скоро ще отговорим.",err:"Попълни всички полета и приеми съгласието."},
@@ -358,13 +32,13 @@
     "hr":{title:"Kontaktiraj podršku",name:"Tvoje ime",email:"Tvoj e-mail",message:"Poruka",consent:"Slažem se na kontakt putem e-pošte.",send:"Pošalji",cancel:"Odustani",okTitle:"Poslano!",ok:"Hvala — ubrzo odgovaramo.",err:"Ispuni sva polja i prihvati privolu."},
     "sl":{title:"Kontaktiraj podporo",name:"Tvoje ime",email:"Tvoj e-poštni naslov",message:"Sporočilo",consent:"Strinjam se s stikom prek navedenega e-poštnega naslova.",send:"Pošlji",cancel:"Prekliči",okTitle:"Poslano!",ok:"Hvala — kmalu odgovorimo.",err:"Izpolni vsa polja in sprejmi soglasje."},
     "he":{title:"צור קשר עם התמיכה",name:"השם שלך",email:"האימייל שלך",message:"הודעה",consent:"אני מסכים/ה שיצרו איתי קשר למייל שסיפקתי.",send:"שלח",cancel:"ביטול",okTitle:"נשלח!",ok:"תודה — נחזור אליך בקרוב.",err:"מלא/י את כל השדות ואשר/י הסכמה."},
-    "ar":{title:"الاتصال بالدعم",name:"اسمك",email:"بريدك الإلكتروني",message:"الرسالة",consent:"أوافق على التواصل معي عبر البريد المذكور.",send:"إرسال",cancel:"إلغاء",okTitle:"تم الإرسال!",ok:"شكرًا — سنرد قریبًا.",err:"املأ جميع الحقول ووافق على الإقرار."},
+    "ar":{title:"الاتصال بالدعم",name:"اسمك",email:"بريدك الإلكتروني",message:"الرسالة",consent:"أوافق على التواصل معي عبر البريد المذكور.",send:"إرسال",cancel:"إلغاء",okTitle:"تم الإرسال!",ok:"شكرًا — سنرد قريبًا.",err:"املأ جميع الحقول ووافق على الإقرار."},
     "fa":{title:"ارتباط با پشتیبانی",name:"نام شما",email:"ایمیل شما",message:"پیام",consent:"موافقت می‌دهم از طریق ایمیل درج‌شده با من تماس بگیرند.",send:"ارسال",cancel:"لغو",okTitle:"ارسال شد!",ok:"متشکرم — به‌زودی پاسخ می‌دهیم.",err:"همه فیلدها را پر کرده و رضایت را بپذیرید."},
     "hi":{title:"सपोर्ट से संपर्क",name:"आपका नाम",email:"आपका ई-मेल",message:"संदेश",consent:"मैं दिए ई-मेल पर संपर्क के लिए सहमत हूँ।",send:"भेजें",cancel:"रद्द करें",okTitle:"भेज दिया!",ok:"धन्यवाद — हम जल्द जवाब देंगे।",err:"कृपया सभी फ़ील्ड भरें और सहमति दें।"},
     "bn":{title:"সাপোর্টে যোগাযোগ",name:"আপনার নাম",email:"আপনার ই-মেইল",message:"বার্তা",consent:"আমি প্রদত্ত ই-মেইলে যোগাযোগে সম্মত।",send:"পাঠান",cancel:"বাতিল",okTitle:"পাঠানো হয়েছে!",ok:"ধন্যবাদ — আমরা দ্রুত উত্তর দেব।",err:"সব ঘর পূরণ করুন এবং সম্মতি দিন।"},
     "ur":{title:"سپورٹ سے رابطہ",name:"آپ کا نام",email:"آپ کی ای میل",message:"پیغام",consent:"میں دی گئی ای میل پر رابطے کی اجازت دیتا/دیتی ہوں۔",send:"بھیجیں",cancel:"منسوخ",okTitle:"بھیج دیا!",ok:"شکریہ — ہم جلد جواب دیں گے۔",err:"تمام فیلڈز پُر کریں اور رضامندی دیں۔"},
-    "zh-cn":{title:"联系支持",name:"您的姓名",email:"您的邮箱",message:"留言",consent:"我同意通过所提供邮箱联系我。",send:"发送",cancel:"取消",okTitle:"已发送！",ok:"感谢—we将尽快回复。",err:"请填写所有字段并勾选同意。"},
-    "zh-tw":{title:"聯絡支援",name:"您的姓名",email:"您的信箱",message:"訊息",consent:"我同意透過提供的信箱聯絡我。",send:"送出",cancel:"取消",okTitle:"已送出！",ok:"感謝—we將盡快回覆。",err:"請填寫所有欄位並勾選同意。"},
+    "zh-cn":{title:"联系支持",name:"您的姓名",email:"您的邮箱",message:"留言",consent:"我同意通过所提供邮箱联系我。",send:"发送",cancel:"取消",okTitle:"已发送！",ok:"感谢—我们将尽快回复。",err:"请填写所有字段并勾选同意。"},
+    "zh-tw":{title:"聯絡支援",name:"您的姓名",email:"您的信箱",message:"訊息",consent:"我同意透過提供的信箱聯絡我。",send:"送出",cancel:"取消",okTitle:"已送出！",ok:"感謝—我們將盡快回覆。",err:"請填寫所有欄位並勾選同意。"},
     "ja":{title:"サポートへ連絡",name:"お名前",email:"メール",message:"メッセージ",consent:"記載のメール宛に連絡することに同意します。",send:"送信",cancel:"キャンセル",okTitle:"送信完了！",ok:"ありがとうございます。追ってご連絡します。",err:"全項目を入力し、同意にチェックしてください。"},
     "ko":{title:"고객 지원 문의",name:"이름",email:"이메일",message:"메시지",consent:"제공된 이메일로 연락받는 것에 동의합니다.",send:"보내기",cancel:"취소",okTitle:"전송 완료!",ok:"감사합니다 — 곧 회신드리겠습니다.",err:"모든 항목을 입력하고 동의에 체크하세요."},
     "th":{title:"ติดต่อฝ่ายสนับสนุน",name:"ชื่อของคุณ",email:"อีเมลของคุณ",message:"ข้อความ",consent:"ยินยอมให้ติดต่อผ่านอีเมลที่ให้ไว้",send:"ส่ง",cancel:"ยกเลิก",okTitle:"ส่งแล้ว!",ok:"ขอบคุณ — เราจะติดต่อกลับเร็วๆ นี้",err:"กรอกทุกช่องและยอมรับข้อตกลง"},
@@ -458,7 +132,3 @@
   });
 })();
 </script>
-  <!-- *** FINE script fornito *** -->
-
-</body>
-</html>
