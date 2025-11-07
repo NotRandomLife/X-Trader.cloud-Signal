@@ -15,7 +15,7 @@
     .card{background:#101825;border:1px solid #1e293b}
     a{color:#93c5fd}
     .ads .slot{background:#0f1420;border:1px dashed #334155;border-radius:1rem; height:250px; display:flex; align-items:center; justify-content:center; font-size:12px; color:#94a3b8}
-    .slot-wide{background:#0f1420;border:1px dashed #334155;border-radius:1rem; min-height:120px; display:flex; align-items:center; justify-content:center; font-size:12px; color:#94a3b8}
+    .slot-wide{background:#0f1420;border:1px dashed #334155;border-radius:1rem; min-height:80px; display:flex; align-items:center; justify-content:center; font-size:12px; color:#94a3b8}
     .btn{background:#1f2937;border:1px solid #334155;border-radius:12px;padding:8px 14px}
     .btn:hover{background:#334155}
     .logo-img{height:32px;width:auto}
@@ -127,7 +127,7 @@
           <img src="assets/logo.png" alt="logo" class="logo-img"><span class="ml-2 font-extrabold tracking-wide">X TRADER</span>
         </a>
         <nav class="hidden md:flex items-center gap-2">
-          <a href="./" class="btn bg-slate-800/80" data-i18n="live_signals">Live signals</a>
+          <a href="./" id="navLive" class="btn bg-slate-800/80" data-i18n="live_signals">Segnali AI Crypto</a>
           <a href="info.html" class="btn" data-i18n="info">Info</a>
           <a href="donate.html" class="btn" data-i18n="donate">Donate</a>
           <a href="mailto:NRL.Crypto.Trade@gmail.com" class="btn" data-i18n="support">Support</a>
@@ -141,7 +141,7 @@
 
   <section class="relative w-full border-b border-slate-800 overflow-visible" style="background:url('assets/X_Trader_BANNER.png') center 35%;">
     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none"></div>
-    <div class="relative max-w-6xl mx-auto px-4 py-16 md:py-24 lg:py-28 min-h-[220px] flex flex-col justify-end">
+    <div class="relative max-w-6xl mx-auto px-4 py-10 md:py-14 lg:py-16 min-h-[140px] flex flex-col justify-end">
       <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold drop-shadow" data-i18n="live_banner">Segnali crypto in tempo reale per BTC USDC</h1>
       <p class="text-slate-200 mt-2 text-sm md:text-base" data-i18n="signals_note">Allineato ai 5 minuti con finestra di tolleranza.</p>
     </div>
@@ -156,7 +156,7 @@
 
         <div class="card signals-card rounded-2xl p-4">
           <div class="flex items-center justify-between mb-2">
-            <h2 class="text-lg font-bold" data-i18n="latest_signals">Ultimi segnali</h2>
+            <h2 id="titleSignals" class="text-lg font-bold">Segnali AI Crypto</h2>
             <div class="flex items-center gap-2">
               <span id="syncBadge" class="text-xs text-slate-400"></span>
               <button id="refresh" class="px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm" data-i18n="refresh">Aggiorna</button>
@@ -260,6 +260,33 @@
         el.classList.add(v>0? 'text-emerald-400' : v<0? 'text-red-400' : 'text-slate-300');
       }
 
+      // === I18n for headings/menu: "Segnali AI Crypto"
+      const TIT = {
+        'en':'AI Crypto Signals','it':'Segnali AI Crypto','es':'Señales Cripto IA','fr':'Signaux Crypto IA','de':'KI‑Krypto‑Signale',
+        'pt':'Sinais Cripto IA','pt-br':'Sinais Cripto IA','ru':'Крипто‑сигналы ИИ','uk':'Криптосигнали ШІ','pl':'Sygnały Krypto AI',
+        'nl':'AI‑Crypto‑signalen','sv':'AI‑kryptosignaler','no':'AI‑kryptosignaler','da':'AI‑kryptosignaler','fi':'AI‑kryptosignaalit',
+        'tr':'YZ Kripto Sinyalleri','el':'Σήματα Κρύπτο ΤΝ','cs':'Krypto signály AI','sk':'Krypto signály AI','hu':'AI kripto jelek',
+        'ro':'Semnale cripto IA','bg':'Крипто сигнали ИИ','sr':'Крипто сигнали АИ','hr':'AI kripto signali','sl':'AI kripto signali',
+        'he':'אותות קריפטו בינה','ar':'إشارات كريبتو بالذكاء الاصطناعي','fa':'سیگنال‌های کریپتو هوش مصنوعی','hi':'एआई क्रिप्टो सिग्नल',
+        'bn':'এআই ক্রিপ্টো সিগন্যাল','ur':'اے آئی کرپٹو سگنلز','zh-cn':'AI 加密信号','zh-tw':'AI 加密訊號','ja':'AI クリプトシグナル',
+        'ko':'AI 암호화 신호','th':'สัญญาณคริปโต AI','vi':'Tín hiệu Crypto AI','id':'Sinyal Kripto AI','ms':'Isyarat Kripto AI','fil':'AI Crypto Signals'
+      };
+      function getLangKey(){
+        let l = (document.getElementById('langSelect')?.value) || navigator.language || 'en';
+        l = l.toLowerCase();
+        if(!TIT[l]) l = l.split('-')[0];
+        if(!TIT[l]) l = 'en';
+        return l;
+      }
+      function applyLangText(){
+        const key = getLangKey();
+        const t = TIT[key] || TIT['en'];
+        const h = document.getElementById('titleSignals');
+        const nv = document.getElementById('navLive');
+        if (h) h.textContent = t;
+        if (nv) nv.textContent = t;
+      }
+
       // === Signals fetch (first working endpoint)
       async function fetchFirstWorking(urls) {
         for (const url of urls) {
@@ -311,6 +338,7 @@
       }
 
       btn?.addEventListener('click', loadSignal);
+      applyLangText();
       loadSignal();
       setInterval(loadSignal, 5000);
 
@@ -360,7 +388,7 @@
       }
       applyCdI18n();
       tick();
-      langSel?.addEventListener('change', applyCdI18n);
+      langSel?.addEventListener('change', ()=>{ applyCdI18n(); applyLangText(); });
 
       // =====================
       //   PREZZO & VARIAZIONI BINANCE (klines 1m)
