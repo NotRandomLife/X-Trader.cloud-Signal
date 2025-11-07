@@ -1,134 +1,279 @@
-<script>
-(function(){
-  // Lingua dal selettore esistente
-  const sel = document.getElementById('langSelect');
-  const getLang = () => (sel && sel.value ? sel.value : (navigator.language || 'en')).toLowerCase();
+<!doctype html> 
+<html lang="en">
+<head>
 
-  // 40 lingue (chiavi minime per il form)
-  const T = {
-    "en":{title:"Contact support",name:"Your name",email:"Your email",message:"Message",consent:"I agree to be contacted via the email provided.",send:"Send",cancel:"Cancel",okTitle:"Sent!",ok:"Thanks — we'll reply soon.",err:"Please fill all fields and accept the consent."},
-    "it":{title:"Contatta il supporto",name:"Il tuo nome",email:"La tua email",message:"Messaggio",consent:"Acconsento ad essere contattato all'email indicata.",send:"Invia",cancel:"Annulla",okTitle:"Inviato!",ok:"Grazie — ti risponderemo a breve.",err:"Compila tutti i campi e accetta il consenso."},
-    "es":{title:"Contactar soporte",name:"Tu nombre",email:"Tu correo",message:"Mensaje",consent:"Acepto ser contactado por el correo proporcionado.",send:"Enviar",cancel:"Cancelar",okTitle:"¡Enviado!",ok:"Gracias — responderemos pronto.",err:"Completa todos los campos y acepta el consentimiento."},
-    "fr":{title:"Contacter l'assistance",name:"Votre nom",email:"Votre e-mail",message:"Message",consent:"J'accepte d'être contacté à l'e-mail fourni.",send:"Envoyer",cancel:"Annuler",okTitle:"Envoyé !",ok:"Merci — nous vous répondrons bientôt.",err:"Veuillez remplir tous les champs et accepter le consentement."},
-    "de":{title:"Support kontaktieren",name:"Dein Name",email:"Deine E-Mail",message:"Nachricht",consent:"Ich stimme zu, per angegebener E-Mail kontaktiert zu werden.",send:"Senden",cancel:"Abbrechen",okTitle:"Gesendet!",ok:"Danke — wir melden uns bald.",err:"Bitte alle Felder ausfüllen und zustimmen."},
-    "pt":{title:"Contactar suporte",name:"Seu nome",email:"Seu e-mail",message:"Mensagem",consent:"Concordo em ser contatado pelo e-mail informado.",send:"Enviar",cancel:"Cancelar",okTitle:"Enviado!",ok:"Obrigado — responderemos em breve.",err:"Preencha todos os campos e aceite o consentimento."},
-    "pt-br":{title:"Falar com o suporte",name:"Seu nome",email:"Seu e-mail",message:"Mensagem",consent:"Concordo em ser contatado pelo e-mail informado.",send:"Enviar",cancel:"Cancelar",okTitle:"Enviado!",ok:"Valeu — responderemos em breve.",err:"Preencha todos os campos e aceite o consentimento."},
-    "ru":{title:"Связаться с поддержкой",name:"Ваше имя",email:"Ваш e-mail",message:"Сообщение",consent:"Согласен на связь по указанной почте.",send:"Отправить",cancel:"Отмена",okTitle:"Отправлено!",ok:"Спасибо — ответим в ближайшее время.",err:"Заполните все поля и дайте согласие."},
-    "uk":{title:"Зв'язатися з підтримкою",name:"Ваше ім'я",email:"Ваш e-mail",message:"Повідомлення",consent:"Погоджуюся на зв'язок за вказаною поштою.",send:"Надіслати",cancel:"Скасувати",okTitle:"Надіслано!",ok:"Дякуємо — відповімо найближчим часом.",err:"Заповніть усі поля та прийміть згоду."},
-    "pl":{title:"Kontakt z pomocą",name:"Twoje imię",email:"Twój e-mail",message:"Wiadomość",consent:"Zgadzam się na kontakt na podany e-mail.",send:"Wyślij",cancel:"Anuluj",okTitle:"Wysłano!",ok:"Dziękujemy — odpiszemy wkrótce.",err:"Uzupełnij wszystkie pola i zaakceptuj zgodę."},
-    "nl":{title:"Contact met support",name:"Je naam",email:"Je e-mail",message:"Bericht",consent:"Ik ga akkoord om via e-mail te worden gecontacteerd.",send:"Versturen",cancel:"Annuleren",okTitle:"Verzonden!",ok:"Bedankt — we reageren snel.",err:"Vul alle velden in en ga akkoord met de toestemming."},
-    "sv":{title:"Kontakta support",name:"Ditt namn",email:"Din e-post",message:"Meddelande",consent:"Jag samtycker till kontakt via angiven e-post.",send:"Skicka",cancel:"Avbryt",okTitle:"Skickat!",ok:"Tack — vi hör av oss snart.",err:"Fyll i alla fält och godkänn samtycket."},
-    "no":{title:"Kontakt support",name:"Ditt navn",email:"Din e-post",message:"Melding",consent:"Jeg samtykker til å bli kontaktet på e-posten.",send:"Send",cancel:"Avbryt",okTitle:"Sendt!",ok:"Takk — vi svarer snart.",err:"Fyll ut alle felt og godta samtykke."},
-    "da":{title:"Kontakt support",name:"Dit navn",email:"Din e-mail",message:"Besked",consent:"Jeg accepterer at blive kontaktet via e-mail.",send:"Send",cancel:"Annullér",okTitle:"Sendt!",ok:"Tak — vi vender snart tilbage.",err:"Udfyld alle felter og accepter samtykke."},
-    "fi":{title:"Ota yhteyttä tukeen",name:"Nimesi",email:"Sähköpostisi",message:"Viesti",consent:"Hyväksyn yhteydenoton sähköpostitse.",send:"Lähetä",cancel:"Peruuta",okTitle:"Lähetetty!",ok:"Kiitos — vastaamme pian.",err:"Täytä kaikki kentät ja hyväksy suostumus."},
-    "tr":{title:"Destekle iletişime geç",name:"Adın",email:"E-postan",message:"Mesaj",consent:"Belirttiğim e-posta üzerinden iletişime geçilmesine izin veriyorum.",send:"Gönder",cancel:"İptal",okTitle:"Gönderildi!",ok:"Teşekkürler — yakında yanıt vereceğiz.",err:"Tüm alanları doldur ve onayı kabul et."},
-    "el":{title:"Επικοινωνία με υποστήριξη",name:"Το όνομά σου",email:"Το e-mail σου",message:"Μήνυμα",consent:"Συμφωνώ να επικοινωνήσουν μαζί μου στο e-mail.",send:"Αποστολή",cancel:"Ακύρωση",okTitle:"Εστάλη!",ok:"Ευχαριστούμε — θα απαντήσουμε σύντομα.",err:"Συμπλήρωσε όλα τα πεδία και αποδέξου τη συγκατάθεση."},
-    "cs":{title:"Kontaktovat podporu",name:"Tvé jméno",email:"Tvůj e-mail",message:"Zpráva",consent:"Souhlasím s kontaktováním na uvedený e-mail.",send:"Odeslat",cancel:"Zrušit",okTitle:"Odesláno!",ok:"Díky — brzy odpovíme.",err:"Vyplň všechna pole a přijmi souhlas."},
-    "sk":{title:"Kontaktovať podporu",name:"Tvoje meno",email:"Tvoj e-mail",message:"Správa",consent:"Súhlasím s kontaktovaním na e-mail.",send:"Odoslať",cancel:"Zrušiť",okTitle:"Odoslané!",ok:"Ďakujeme — čoskoro odpovieme.",err:"Vyplň všetky polia a odsúhlas súhlas."},
-    "hu":{title:"Kapcsolatfelvétel támogatással",name:"Neved",email:"E-mailed",message:"Üzenet",consent:"Hozzájárulok az e-mailes megkereséshez.",send:"Küldés",cancel:"Mégse",okTitle:"Elküldve!",ok:"Köszönjük — hamarosan válaszolunk.",err:"Töltsd ki az összes mezőt és fogadd el a hozzájárulást."},
-    "ro":{title:"Contactează suportul",name:"Numele tău",email:"Emailul tău",message:"Mesaj",consent:"Sunt de acord să fiu contactat pe emailul furnizat.",send:"Trimite",cancel:"Anulează",okTitle:"Trimis!",ok:"Mulțumim — revenim curând.",err:"Completează toate câmpurile și acceptă consimțământul."},
-    "bg":{title:"Свържи се с поддръжка",name:"Твоето име",email:"Твоят e-mail",message:"Съобщение",consent:"Съгласен/на съм да бъда потърсен/а по e-mail.",send:"Изпрати",cancel:"Откажи",okTitle:"Изпратено!",ok:"Благодарим — скоро ще отговорим.",err:"Попълни всички полета и приеми съгласието."},
-    "sr":{title:"Контакт подршка",name:"Твоје име",email:"Твој е-мејл",message:"Порука",consent:"Прихватам контакт на наведени е-мејл.",send:"Пошаљи",cancel:"Откажи",okTitle:"Послато!",ok:"Хвала — ускоро одговарамо.",err:"Попуни сва поља и прихвати сагласност."},
-    "hr":{title:"Kontaktiraj podršku",name:"Tvoje ime",email:"Tvoj e-mail",message:"Poruka",consent:"Slažem se na kontakt putem e-pošte.",send:"Pošalji",cancel:"Odustani",okTitle:"Poslano!",ok:"Hvala — ubrzo odgovaramo.",err:"Ispuni sva polja i prihvati privolu."},
-    "sl":{title:"Kontaktiraj podporo",name:"Tvoje ime",email:"Tvoj e-poštni naslov",message:"Sporočilo",consent:"Strinjam se s stikom prek navedenega e-poštnega naslova.",send:"Pošlji",cancel:"Prekliči",okTitle:"Poslano!",ok:"Hvala — kmalu odgovorimo.",err:"Izpolni vsa polja in sprejmi soglasje."},
-    "he":{title:"צור קשר עם התמיכה",name:"השם שלך",email:"האימייל שלך",message:"הודעה",consent:"אני מסכים/ה שיצרו איתי קשר למייל שסיפקתי.",send:"שלח",cancel:"ביטול",okTitle:"נשלח!",ok:"תודה — נחזור אליך בקרוב.",err:"מלא/י את כל השדות ואשר/י הסכמה."},
-    "ar":{title:"الاتصال بالدعم",name:"اسمك",email:"بريدك الإلكتروني",message:"الرسالة",consent:"أوافق على التواصل معي عبر البريد المذكور.",send:"إرسال",cancel:"إلغاء",okTitle:"تم الإرسال!",ok:"شكرًا — سنرد قريبًا.",err:"املأ جميع الحقول ووافق على الإقرار."},
-    "fa":{title:"ارتباط با پشتیبانی",name:"نام شما",email:"ایمیل شما",message:"پیام",consent:"موافقت می‌دهم از طریق ایمیل درج‌شده با من تماس بگیرند.",send:"ارسال",cancel:"لغو",okTitle:"ارسال شد!",ok:"متشکرم — به‌زودی پاسخ می‌دهیم.",err:"همه فیلدها را پر کرده و رضایت را بپذیرید."},
-    "hi":{title:"सपोर्ट से संपर्क",name:"आपका नाम",email:"आपका ई-मेल",message:"संदेश",consent:"मैं दिए ई-मेल पर संपर्क के लिए सहमत हूँ।",send:"भेजें",cancel:"रद्द करें",okTitle:"भेज दिया!",ok:"धन्यवाद — हम जल्द जवाब देंगे।",err:"कृपया सभी फ़ील्ड भरें और सहमति दें।"},
-    "bn":{title:"সাপোর্টে যোগাযোগ",name:"আপনার নাম",email:"আপনার ই-মেইল",message:"বার্তা",consent:"আমি প্রদত্ত ই-মেইলে যোগাযোগে সম্মত।",send:"পাঠান",cancel:"বাতিল",okTitle:"পাঠানো হয়েছে!",ok:"ধন্যবাদ — আমরা দ্রুত উত্তর দেব।",err:"সব ঘর পূরণ করুন এবং সম্মতি দিন।"},
-    "ur":{title:"سپورٹ سے رابطہ",name:"آپ کا نام",email:"آپ کی ای میل",message:"پیغام",consent:"میں دی گئی ای میل پر رابطے کی اجازت دیتا/دیتی ہوں۔",send:"بھیجیں",cancel:"منسوخ",okTitle:"بھیج دیا!",ok:"شکریہ — ہم جلد جواب دیں گے۔",err:"تمام فیلڈز پُر کریں اور رضامندی دیں۔"},
-    "zh-cn":{title:"联系支持",name:"您的姓名",email:"您的邮箱",message:"留言",consent:"我同意通过所提供邮箱联系我。",send:"发送",cancel:"取消",okTitle:"已发送！",ok:"感谢—我们将尽快回复。",err:"请填写所有字段并勾选同意。"},
-    "zh-tw":{title:"聯絡支援",name:"您的姓名",email:"您的信箱",message:"訊息",consent:"我同意透過提供的信箱聯絡我。",send:"送出",cancel:"取消",okTitle:"已送出！",ok:"感謝—我們將盡快回覆。",err:"請填寫所有欄位並勾選同意。"},
-    "ja":{title:"サポートへ連絡",name:"お名前",email:"メール",message:"メッセージ",consent:"記載のメール宛に連絡することに同意します。",send:"送信",cancel:"キャンセル",okTitle:"送信完了！",ok:"ありがとうございます。追ってご連絡します。",err:"全項目を入力し、同意にチェックしてください。"},
-    "ko":{title:"고객 지원 문의",name:"이름",email:"이메일",message:"메시지",consent:"제공된 이메일로 연락받는 것에 동의합니다.",send:"보내기",cancel:"취소",okTitle:"전송 완료!",ok:"감사합니다 — 곧 회신드리겠습니다.",err:"모든 항목을 입력하고 동의에 체크하세요."},
-    "th":{title:"ติดต่อฝ่ายสนับสนุน",name:"ชื่อของคุณ",email:"อีเมลของคุณ",message:"ข้อความ",consent:"ยินยอมให้ติดต่อผ่านอีเมลที่ให้ไว้",send:"ส่ง",cancel:"ยกเลิก",okTitle:"ส่งแล้ว!",ok:"ขอบคุณ — เราจะติดต่อกลับเร็วๆ นี้",err:"กรอกทุกช่องและยอมรับข้อตกลง"},
-    "vi":{title:"Liên hệ hỗ trợ",name:"Tên của bạn",email:"Email của bạn",message:"Nội dung",consent:"Tôi đồng ý được liên hệ qua email đã cung cấp.",send:"Gửi",cancel:"Hủy",okTitle:"Đã gửi!",ok:"Cảm ơn — chúng tôi sẽ phản hồi sớm.",err:"Vui lòng điền đủ và chấp thuận."},
-    "id":{title:"Hubungi dukungan",name:"Nama Anda",email:"Email Anda",message:"Pesan",consent:"Saya setuju dihubungi lewat email yang diberikan.",send:"Kirim",cancel:"Batal",okTitle:"Terkirim!",ok:"Terima kasih — kami akan segera membalas.",err:"Isi semua kolom dan setujui persetujuan."},
-    "ms":{title:"Hubungi sokongan",name:"Nama anda",email:"Emel anda",message:"Mesej",consent:"Saya setuju dihubungi melalui emel yang diberi.",send:"Hantar",cancel:"Batal",okTitle:"Dihantar!",ok:"Terima kasih — kami akan balas segera.",err:"Sila isi semua medan dan setuju."},
-    "fil":{title:"Makipag-ugnayan sa support",name:"Iyong pangalan",email:"Iyong email",message:"Mensahe",consent:"Sumasang-ayon akong kontakin sa ibinigay na email.",send:"Ipadala",cancel:"Kanselahin",okTitle:"Naipadala!",ok:"Salamat — sasagot kami kaagad.",err:"Punan lahat ng fields at tanggapin ang pahintulot."}
-  };
-  const F = (k) => {
-    let lang = getLang();
-    if (!T[lang]) lang = lang.split('-')[0];
-    if (!T[lang]) lang = 'en';
-    return T[lang][k] || T['en'][k] || k;
-  };
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0f15">
+  <link rel="icon" type="image/png" href="assets/logo-32.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>X TRADER — Live</title>
 
-  // UI refs
-  const modal = document.getElementById('supportModal');
-  const openBtn = document.getElementById('openSupport');
-  const closeBtn = document.getElementById('closeSupport');
-  const sTitle = document.getElementById('s_title');
-  const sNameLbl = document.getElementById('s_name_lbl');
-  const sEmailLbl = document.getElementById('s_email_lbl');
-  const sMsgLbl = document.getElementById('s_msg_lbl');
-  const sConsentLbl = document.getElementById('s_consent_lbl');
-  const sCancel = document.getElementById('s_cancel');
-  const sSend = document.getElementById('s_send');
-  const sErr = document.getElementById('s_error');
-  const sOK = document.getElementById('s_ok');
+  <!-- BASE THEME -->
+  <style>
+    body{background:#0b0f15;color:#eaeef5}
+    .card{background:#101825;border:1px solid #1e293b}
+    a{color:#93c5fd}
+    .ads .slot{background:#0f1420;border:1px dashed #334155;border-radius:1rem; height:250px; display:flex; align-items:center; justify-content:center; font-size:12px; color:#94a3b8}
+    .slot-wide{background:#0f1420;border:1px dashed #334155;border-radius:1rem; min-height:120px; display:flex; align-items:center; justify-content:center; font-size:12px; color:#94a3b8}
+    .btn{background:#1f2937;border:1px solid #334155;border-radius:12px;padding:8px 14px}
+    .btn:hover{background:#334155}
+    .logo-img{height:32px;width:auto}
+    .signals-card{min-height:420px}
+    @media(min-width:768px){.signals-card{min-height:480px}}
+  </style>
 
-  function applyI18n(){
-    sTitle.textContent = F('title');
-    sNameLbl.textContent = F('name');
-    sEmailLbl.textContent = F('email');
-    sMsgLbl.textContent = F('message');
-    sConsentLbl.textContent = F('consent');
-    sCancel.textContent = F('cancel');
-    sSend.textContent = F('send');
-  }
+  <!-- HEADER UI -->
+  <style>
+    #langSelect{background:#0f172a;border:1px solid #334155;border-radius:8px;color:#e2e8f0}
+    #langSelect{background:#0b1220;border:1px solid #334155;border-radius:8px;color:#e2e8f0;z-index:60}
+    header{position:sticky;top:0;z-index:50}
+  </style>
 
-  openBtn?.addEventListener('click', (e)=>{ e.preventDefault(); applyI18n(); sErr.classList.add('hidden'); sOK.classList.add('hidden'); modal.classList.add('show'); });
-  closeBtn?.addEventListener('click', ()=> modal.classList.remove('show'));
-  sCancel?.addEventListener('click', (e)=>{ e.preventDefault(); modal.classList.remove('show'); });
-  sel?.addEventListener('change', ()=>{ if (modal.classList.contains('show')) applyI18n(); });
-
-  // helper: encode x-www-form-urlencoded
-  function encode(data){
-    return Object.keys(data).map(k => encodeURIComponent(k) + '=' + encodeURIComponent(data[k])).join('&');
-  }
-
-  document.getElementById('s_send')?.addEventListener('click', async (e)=>{
-    e.preventDefault();
-    const name = document.getElementById('s_name').value.trim();
-    const email = document.getElementById('s_email').value.trim();
-    const msg = document.getElementById('s_msg').value.trim();
-    const consent = document.getElementById('s_consent').checked;
-    if (!name || !email || !msg || !consent) {
-      sErr.textContent = F('err'); sErr.classList.remove('hidden'); sOK.classList.add('hidden'); return;
+  <!-- COMPACT SIGNALS -->
+  <style>
+    .signals-card{min-height:auto !important; padding:8px !important;}
+    #signals{display:flex; flex-direction:column; gap:4px !important; margin:4px 0 !important;}
+    .signal-line{
+      font: 600 13px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      line-height: 1.2; color:#e5e7eb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
+    .signal-line .when{color:#94a3b8; font-weight:500}
+    .signal-line .pair{color:#a5b4fc; font-weight:700}
+    .signal-line .sig{font-weight:800}
+    .sig.buy{color:#34d399}
+    .sig.sell{color:#f87171}
+    .sig.hold{color:#cbd5e1}
+    .signals-card .border{border:0 !important;}
+    .signals-card .bg-slate-900\/60{background:transparent !important;}
+  </style>
 
-    const payload = {
-      "form-name":"support",
-      "name": name,
-      "email": email,
-      "message": msg,
-      "consent": "yes",
-      "lang": getLang()
-    };
+  <!-- BIG SIGNAL LINE -->
+  <style>
+    .signal-line{
+      font-weight: 900 !important;
+      font-size: 22px !important;
+      line-height: 1.35 !important;
+      letter-spacing: 0.2px !important;
+      text-shadow: 0 0 6px rgba(0,0,0,.35);
+    }
+    @media (min-width: 640px){
+      .signal-line{ font-size: 24px !important; }
+    }
+    @media (min-width: 1024px){
+      .signal-line{ font-size: 26px !important; }
+    }
+    .signal-line .when{ font-weight: 800 !important; }
+    .signal-line .pair{ font-weight: 900 !important; }
+    .signal-line .sig { font-weight: 900 !important; }
+    #signals{ margin: 8px 0 !important; }
+  </style>
 
-    try{
-      // invia a Netlify Forms
-      const res = await fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type':'application/x-www-form-urlencoded' },
-        body: encode(payload)
-      });
-      if (res.ok) {
-        sOK.textContent = F('ok'); sOK.classList.remove('hidden'); sErr.classList.add('hidden');
-        // reset campi
-        document.getElementById('s_name').value='';
-        document.getElementById('s_email').value='';
-        document.getElementById('s_msg').value='';
-        document.getElementById('s_consent').checked=false;
-        // chiudi dopo poco
-        setTimeout(()=> modal.classList.remove('show'), 1200);
-      } else {
-        sErr.textContent = 'Send error'; sErr.classList.remove('hidden'); sOK.classList.add('hidden');
+  <!-- DYNAMIC ADS VISIBILITY -->
+  <style>
+    /* Sidebar ads: sticky su desktop */
+    @media (min-width: 1024px){
+      aside.ads{
+        position: sticky;
+        top: 12px;             /* resta visibile quando scrolli */
+        align-self: start;
+        height: fit-content;
       }
-    } catch(err){
-      sErr.textContent = 'Network error'; sErr.classList.remove('hidden'); sOK.classList.add('hidden');
     }
-  });
-})();
-</script>
+
+    /* Slot wide sempre reattivi: mantieni margini quando si stringe */
+    .slot-wide{
+      width: 100%;
+      display: flex;
+      align-items: center; justify-content: center;
+      padding: 8px;
+    }
+
+    /* Floating ad su schermi piccoli: resta sempre visibile in basso
+       (non copre i pulsanti grazie al padding-bottom del body) */
+    @media (max-width: 1023px){
+      .floating-ad {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        z-index: 60;
+        background:#0f1420;
+        border:1px dashed #334155;
+        border-radius:1rem;
+        min-height: 80px;             /* più basso per mobile */
+        display:flex; align-items:center; justify-content:center;
+        color:#94a3b8; font-size:12px;
+        box-shadow: 0 8px 30px rgba(0,0,0,.45);
+      }
+      body.has-floating-ad{
+        padding-bottom: 110px; /* spazio per non coprire contenuti */
+      }
+      .floating-ad .close {
+        position:absolute; top:6px; right:8px;
+        background:#1f2937; border:1px solid #334155; color:#e5e7eb;
+        border-radius:8px; padding:2px 6px; font-size:11px; cursor:pointer;
+      }
+    }
+  </style>
+
+</head>
+<body class="min-h-screen">
+
+  <header class="px-4 py-3 sticky top-0 z-50 backdrop-blur bg-black/50 border-b border-slate-800">
+    <div class="max-w-6xl mx-auto flex items-center gap-3 justify-between">
+      <div class="flex items-center gap-3">
+        <a href="./" class="flex items-center gap-2 text-lg font-semibold">
+          <img src="assets/logo.png" alt="logo" class="logo-img"><span class="ml-2 font-extrabold tracking-wide">X TRADER</span>
+        </a>
+        <nav class="hidden md:flex items-center gap-2">
+          <a href="./" class="btn bg-slate-800/80" data-i18n="live_signals">Live signals</a>
+          <a href="info.html" class="btn" data-i18n="info">Info</a>
+          <a href="donate.html" class="btn" data-i18n="donate">Donate</a>
+          <a href="mailto:NRL.Crypto.Trade@gmail.com" class="btn" data-i18n="support">Support</a>
+        </nav>
+      </div>
+      <div class="flex items-center gap-2">
+        <select id="langSelect" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-sm"></select>
+      </div>
+    </div>
+  </header>
+
+  <section class="relative w-full border-b border-slate-800 overflow-visible" style="background:url('assets/X_Trader_BANNER.png') center 35%;">
+    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none"></div>
+    <div class="relative max-w-6xl mx-auto px-4 py-16 md:py-24 lg:py-28 min-h-[220px] flex flex-col justify-end">
+      <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold drop-shadow" data-i18n="live_banner">Segnali crypto in tempo reale per BTC USDC</h1>
+      <p class="text-slate-200 mt-2 text-sm md:text-base" data-i18n="signals_note">Allineato ai 5 minuti con finestra di tolleranza.</p>
+    </div>
+  </section>
+
+  <main class="max-w-6xl mx-auto p-4">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <section class="lg:col-span-2 space-y-4">
+        <!-- ADS SOPRA I SEGNALI -->
+        <div class="slot-wide text-center">ADS 728×90 / 970×120</div>
+
+        <div class="card signals-card rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="text-lg font-bold" data-i18n="latest_signals">Ultimi segnali</h2>
+            <button id="refresh" class="px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm" data-i18n="refresh">Aggiorna</button>
+          </div>
+          <div id="signals"></div>
+          <p id="err" class="text-red-400 text-xs mt-1"></p>
+        </div>
+
+        <!-- ADS SOTTO I SEGNALI #1 -->
+        <div class="slot-wide text-center">ADS 728×90 / 970×120</div>
+        <!-- ADS SOTTO I SEGNALI #2 -->
+        <div class="slot-wide text-center">ADS 728×90 / 970×120</div>
+      </section>
+
+      <!-- SIDEBAR ADS (sticky su desktop) -->
+      <aside class="ads space-y-4">
+        <div class="slot">ADS 300×250 #1</div>
+        <div class="slot">ADS 300×250 #2</div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="mt-10 border-t border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2 text-sm text-slate-400">
+        <a href="./" class="flex items-center gap-2 font-semibold text-slate-200"><img src="assets/logo.png" alt="logo" class="logo-img"></a>
+        <span>© X&nbsp;TRADER</span>
+      </div>
+      <nav class="flex items-center gap-3 text-sm">
+        <a href="./" data-i18n="live_signals">Live signals</a>
+        <a href="info.html" data-i18n="info">Info</a>
+        <a href="donate.html" data-i18n="donate">Donate</a>
+        <a href="mailto:NRL.Crypto.Trade@gmail.com" data-i18n="support">Support</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- FLOATING AD (solo mobile/tablet) -->
+  <div id="mobileFloatingAd" class="floating-ad" style="display:none">
+    <button class="close" onclick="(function(){ localStorage.setItem('adClosed','1'); document.body.classList.remove('has-floating-ad'); document.getElementById('mobileFloatingAd').style.display='none'; })()">Chiudi ✕</button>
+    <div>ADS 320×100 / 320×50 (Mobile)</div>
+  </div>
+
+  <!-- =========================
+       SCRIPT LETTURA SEGNALI
+       ========================= -->
+  <script>
+    (function(){
+      const elList = document.getElementById('signals');
+      const elErr  = document.getElementById('err');
+      const btn    = document.getElementById('refresh');
+      const endpoints = ['/api/signal', '/.netlify/functions/signal'];
+
+      // Floating Ad logic (mostra su mobile se non chiuso)
+      function setupFloatingAd(){
+        const isDesktop = window.matchMedia('(min-width:1024px)').matches;
+        const closed = localStorage.getItem('adClosed') === '1';
+        const el = document.getElementById('mobileFloatingAd');
+        if (!isDesktop && !closed && el){
+          document.body.classList.add('has-floating-ad');
+          el.style.display = 'flex';
+        } else {
+          document.body.classList.remove('has-floating-ad');
+          if (el) el.style.display = 'none';
+        }
+      }
+      setupFloatingAd();
+      window.addEventListener('resize', setupFloatingAd);
+
+      async function fetchFirstWorking() {
+        for (const url of endpoints) {
+          try {
+            const r = await fetch(url, { cache: 'no-store' });
+            if (r.ok) return r.json();
+          } catch (_) {}
+        }
+        throw new Error('Nessun endpoint disponibile');
+      }
+
+      function render(data){
+        elErr.textContent = '';
+        elList.innerHTML = '';
+        if (!data) {
+          elList.innerHTML = `<div class="signal-line"><span class="when">Nessun segnale salvato</span></div>`;
+          return;
+        }
+        const when = new Date(data.at).toLocaleString(undefined,{dateStyle:'short',timeStyle:'medium'});
+        const sig  = String(data.signal||'hold').toLowerCase();
+        const line = `
+          <div class="signal-line">
+            <span class="when">${when}</span>
+            &nbsp;—&nbsp;
+            <span class="pair">${data.pair||'BTCUSDC'}</span>
+            &nbsp;—&nbsp;
+            <span class="sig ${sig}">${sig.toUpperCase()}</span>
+          </div>`;
+        elList.innerHTML = line;
+      }
+
+      async function loadSignal(){
+        try {
+          const data = await fetchFirstWorking();
+          render(data);
+        } catch (e) {
+          elErr.textContent = 'Errore lettura segnale';
+          elList.innerHTML = '';
+        }
+      }
+
+      btn?.addEventListener('click', loadSignal);
+      loadSignal();
+      setInterval(loadSignal, 5000);
+    })();
+  </script>
+
+  <!-- I TUOI SCRIPT ESISTENTI -->
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/fallback.js"></script>
+
+</body>
+</html>
