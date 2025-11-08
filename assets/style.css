@@ -168,3 +168,7 @@ body{
   background:rgba(2,6,23,.6);
   padding: .4rem env(safe-area-inset-right) .4rem env(safe-area-inset-left);
 }
+
+/* Footer brand alignment with buttons */
+footer nav .brand-logo{display:inline-flex;align-items:center;gap:8px;}
+footer nav .brand-logo img{height:16px;width:16px;margin-right:0;vertical-align:middle;}
