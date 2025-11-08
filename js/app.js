@@ -110,7 +110,7 @@ let etag = null;
 
 // quick hash for change detection
 function quickHash(obj){
-  try { const s = JSON.stringify(obj); let h = 0; for (let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) >>> 0; } return h.toString(16); }
+  try { const s = JSON.stringify(obj); let h = 0; for (let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) > 0; } return h.toString(16); }
   catch(e){ return null; }
 }
 
