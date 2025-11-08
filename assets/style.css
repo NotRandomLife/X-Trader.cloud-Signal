@@ -172,3 +172,27 @@ body{
 /* Footer brand alignment with buttons */
 footer nav .brand-logo{display:inline-flex;align-items:center;gap:8px;}
 footer nav .brand-logo img{height:16px;width:16px;margin-right:0;vertical-align:middle;}
+
+/* === Footer nav alignment fix === */
+footer nav{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
+  flex-wrap:wrap !important;
+}
+footer nav a.btn{
+  display:inline-flex !important;
+  align-items:center !important;
+  white-space:nowrap !important;
+}
+footer nav a.btn.brand-logo{
+  padding-left:10px !important;
+  padding-right:10px !important;
+}
+footer nav a.btn.brand-logo img{
+  height:16px !important;
+  width:16px !important;
+  margin-right:6px !important;
+  vertical-align:middle !important;
+}
