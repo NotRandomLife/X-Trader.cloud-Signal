@@ -86,15 +86,15 @@
 <link href="https://x-trader.cloud/es/" hreflang="es" rel="alternate"/>
 <link href="https://x-trader.cloud/fr/" hreflang="fr" rel="alternate"/>
 <link href="https://x-trader.cloud/hi/" hreflang="hi" rel="alternate"/>
-<link href="https://x-trader.cloud/id/" hreflang="id" rel="alternate">
-<link href="https://x-trader.cloud/it/" hreflang="it" rel="alternate">
-<link href="https://x-trader.cloud/ja/" hreflang="ja" rel="alternate">
+<link href="https://x-trader.cloud/id/" hreflang="id" rel="alternate"/>
+<link href="https://x-trader.cloud/it/" hreflang="it" rel="alternate"/>
+<link href="https://x-trader.cloud/ja/" hreflang="ja" rel="alternate"/>
 <link href="https://x-trader.cloud/ko/" hreflang="ko" rel="alternate"/>
 <link href="https://x-trader.cloud/nl/" hreflang="nl" rel="alternate"/>
 <link href="https://x-trader.cloud/pl/" hreflang="pl" rel="alternate"/>
-<link href="https://x-trader.cloud/pt/" hreflang="pt" rel="alternate"/>
-<link href="https://x-trader.cloud/ru/" hreflang="ru" rel="alternate"/>
-<link href="https://x-trader.cloud/tr/" hreflang="tr" rel="alternate"/>
+<link href="https://x-trader.cloud/pt/" hreflang="pt" rel="alternate">
+<link href="https://x-trader.cloud/ru/" hreflang="ru" rel="alternate">
+<link href="https://x-trader.cloud/tr/" hreflang="tr" rel="alternate">
 <link href="https://x-trader.cloud/uk/" hreflang="uk" rel="alternate"/>
 <link href="https://x-trader.cloud/vi/" hreflang="vi" rel="alternate"/>
 <link href="https://x-trader.cloud/zh/" hreflang="zh" rel="alternate"/>
@@ -120,12 +120,26 @@
 </div>
 </header>
 <main class="max-w-4xl mx-auto px-4 py-10">
+
+
 <div id="auth-box" style="margin:16px 0;padding:16px;border:1px solid var(--card-border,#2a2a2a);border-radius:12px;background:var(--card-bg,#111);box-shadow:0 2px 8px rgba(0,0,0,.2);font-size:14px">
 <h3 style="margin:0 0 12px;font-size:18px">Cuenta y Newsletter</h3>
 <div id="auth-status" style="margin-bottom:8px">🚪 No conectado</div>
 <form id="auth-email-form" onsubmit="return false;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div>
+<label for="auth-first" style="display:block;margin:8px 0 4px">Nombre</label>
+<input id="auth-first" style="width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0e0e0e;color:#fff" type="text"/>
+</div>
+<div>
+<label for="auth-last" style="display:block;margin:8px 0 4px">Apellido</label>
+<input id="auth-last" style="width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0e0e0e;color:#fff" type="text"/>
+</div>
+</div>
 <label for="auth-email" style="display:block;margin:8px 0 4px">Correo</label>
 <input id="auth-email" placeholder="you@example.com" style="width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0e0e0e;color:#fff" type="email"/>
+<label for="auth-phone" style="display:block;margin:8px 0 4px">Número de teléfono</label>
+<input id="auth-phone" placeholder="+39 ..." style="width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0e0e0e;color:#fff" type="tel"/>
 <label for="auth-password" style="display:block;margin:8px 0 4px">Contraseña</label>
 <input id="auth-password" placeholder="********" style="width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0e0e0e;color:#fff" type="password"/>
 <div style="display:flex;align-items:center;gap:8px;margin:10px 0">
@@ -135,7 +149,6 @@
 <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
 <button id="btn-register" style="padding:8px 12px;border-radius:10px;border:1px solid #333;background:#1a1a1a;color:#fff;cursor:pointer" type="button">Registrarse</button>
 <button id="btn-login" style="padding:8px 12px;border-radius:10px;border:1px solid #333;background:#1a1a1a;color:#fff;cursor:pointer" type="button">Iniciar sesión</button>
-<button id="btn-google" style="padding:8px 12px;border-radius:10px;border:1px solid #333;background:#1a1a1a;color:#fff;cursor:pointer" type="button">Continuar con Google</button>
 <button id="btn-logout" style="padding:8px 12px;border-radius:10px;border:1px solid #333;background:#1a1a1a;color:#fff;cursor:pointer" type="button">Cerrar sesión</button>
 </div>
 <div id="auth-missing-cfg" style="margin-top:8px;font-size:12px;opacity:.8">Falta configuración de Firebase. Añade window.XTRADER_FIREBASE_CONFIG.</div>
@@ -163,5 +176,5 @@
 </footer>
 <script src="../assets/js/sync-nav.js"></script>
 <script src="../assets/js/trade-ui.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script><script src="../assets/auth.js"></script></body>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script><script src="../assets/firebase-config.js"></script><script src="../assets/auth.js"></script></body>
 </html>
