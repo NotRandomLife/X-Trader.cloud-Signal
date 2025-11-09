@@ -33,7 +33,15 @@
   function ready(fn){ if(document.readyState!=="loading"){ fn(); } else { document.addEventListener("DOMContentLoaded", fn); } }
 
   let firebaseAvailable=false, app, auth, db;
-  function hasCfg(){ return typeof window.XTRADER_FIREBASE_CONFIG==="object" && !!window.XTRADER_FIREBASE_CONFIG.apiKey; }
+  function hasCfg(){
+    try{
+      if (typeof window.XTRADER_FIREBASE_CONFIG !== "object") return false;
+      const c = window.XTRADER_FIREBASE_CONFIG||{};
+      const required = ["apiKey","authDomain","projectId","appId"];
+      for (var k of required){ if(!c[k] || /YOUR_/i.test(String(c[k])) ) return false; }
+      return true;
+    }catch(e){ return false; }
+  }
   function initFirebase(){
     try{
       if(!hasCfg()) return;
@@ -90,7 +98,11 @@
     }catch(e){ log("Newsletter error",e); }
   }
 
-  function ui(){
+  function showConfigError(){
+      var el = document.getElementById("auth-missing-cfg");
+      if(el){ el.style.display="block"; el.style.color="#f87171"; el.style.fontWeight="600"; }
+    }
+    function ui(){
     const lang=pickLang();
     localizeAuthUI(lang);
 
@@ -111,7 +123,7 @@
     }
 
     initFirebase();
-    if(!firebaseAvailable){ missing&&(missing.style.display="block"); setEnabled(false); }
+    if(!firebaseAvailable){ showConfigError(); setEnabled(false); }
     else { missing&&(missing.style.display="none"); setEnabled(true); }
 
     function setStatus(inOut){ if(status) status.textContent = inOut ? TA("status_in",lang) : TA("status_out",lang); }

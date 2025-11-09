@@ -2,7 +2,7 @@
 (function(){
   const $=(s,p=document)=>p.querySelector(s), $$=(s,p=document)=>[...p.querySelectorAll(s)];
   const I=window.I18N||{}; const pref=localStorage.getItem('lang'); const nav=(navigator.language||'en').toLowerCase();
-  let lang=pref|| (I[nav] ? nav : (I[nav?.split('-')[0]] ? nav.split('-')[0] : 'en'));
+  let lang=(window.getActiveLang && window.getActiveLang()) || (pref|| (I[nav] ? nav : (I[nav?.split('-')[0]] ? nav.split('-')[0] : 'en')));
   function T(k){ return (I[lang]&&I[lang][k])||(I['en']&&I['en'][k])||k; }
 
   function el(tag, attrs={}, children=[]){
@@ -253,6 +253,7 @@
     mountPoint.appendChild(card);
   }
 
+  window.addEventListener('xtr:langchange', function(e){ try{ lang = e && e.detail && e.detail.lang || lang; mount(); }catch(err){} });
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', mount); }
   else{ mount(); }
 })();
