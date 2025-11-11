@@ -3,7 +3,9 @@
 <html lang="id">
 <head>
 <link rel="icon" href="../assets/Xy_logo.ico">
+<link rel="shortcut icon" href="../assets/Xy_logo.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/logo-32.png">
+
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#0b0f1a" name="theme-color"/>
@@ -101,10 +103,7 @@
 <link href="https://X-Trader.cloud/vi/" hreflang="vi" rel="alternate"/>
 <link href="https://X-Trader.cloud/zh/" hreflang="zh" rel="alternate"/>
 <link href="https://X-Trader.cloud/" hreflang="en" rel="alternate"/>
-</link></link></link><script src="../assets/js/i18n.js"></script>
-<script src="../assets/js/app.js"></script>
-<script src="../assets/js/fallback.js"></script>
-</head>
+</link></link></link></head>
 <body class="min-h-screen">
 <header class="px-4 py-3 sticky top-0 z-50 backdrop-blur bg-black/50 border-b border-slate-800">
 <div class="max-w-6xl mx-auto flex items-center gap-3 justify-between">
@@ -148,14 +147,35 @@
 <script src="../assets/js/sync-nav.js"></script>
 <script src="assets/js/trade-ui.js"></script>
 
-<!-- XTR-LANG-SYNC -->
+<!-- XTR-LANG-SYNC2 -->
 <script>
 (function(){
-  var LANGS=['en','it','es','fr','de','pt','ar','hi','id','ja','ko','nl','pl','ru','tr','uk','vi','zh'];
-  function currLang(){ var m=location.pathname.match(/\/([a-z]{2})\//i); return m?m[1].toLowerCase():'en'; }
+  var LIVE={"en": "AI Crypto Signals", "it": "Segnali AI Crypto", "es": "Señales AI Cripto", "fr": "Signaux IA Crypto", "de": "KI-Krypto-Signale", "pt": "Sinais de Cripto IA", "ar": "إشارات تشفير بالذكاء الاصطناعي", "hi": "एआई क्रिप्टो संकेत", "id": "Sinyal Kripto AI", "ja": "AI暗号シグナル", "ko": "AI 암호화 신호", "nl": "AI Crypto Signalen", "pl": "Sygnały AI Crypto", "ru": "Сигналы ИИ Крипто", "tr": "Yapay Zeka Kripto Sinyalleri", "uk": "Криптосигнали ШІ", "vi": "Tín hiệu Crypto AI", "zh": "AI 加密信号"};
+  var ALL=["en", "it", "es", "fr", "de", "pt", "ar", "hi", "id", "ja", "ko", "nl", "pl", "ru", "tr", "uk", "vi", "zh"];
+  function q(name){ var m=location.search.match(new RegExp('[?&]'+name+'=([^&]+)')); return m?decodeURIComponent(m[1]):null; }
+  function currLang(){
+    var ql=q('lang'); if(ql) return ql.toLowerCase();
+    var m=location.pathname.match(/\/([a-z]{2})\//i); return m?m[1].toLowerCase():'en';
+  }
   function inLangDir(){ return /\/([a-z]{2})\//i.test(location.pathname); }
-  function setDocLang(){ document.documentElement.setAttribute('lang', currLang()); try{ localStorage.setItem('xtr_lang', currLang()); }catch(e){} }
-  function ensureSelect(){
+  function ensureFavicon(){
+    var rel=inLangDir()?'../assets/':'assets/';
+    if(!document.querySelector('link[rel="icon"]')){
+      var head=document.querySelector('head')||document.body;
+      var l1=document.createElement('link'); l1.rel='icon'; l1.href=rel+'Xy_logo.ico'; head.appendChild(l1);
+      var l2=document.createElement('link'); l2.rel='icon'; l2.type='image/png'; l2.sizes='32x32'; l2.href=rel+'logo-32.png'; head.appendChild(l2);
+    }
+  }
+  function fixBinance(){
+    var rel=inLangDir()?'../assets/':'assets/';
+    document.querySelectorAll('a[data-i18n="binance"], a[href*="binance.com"]').forEach(function(a){
+      var cls=(a.className||''); if(cls.indexOf('btn')===-1) cls='btn '+cls; a.className=cls.trim();
+      a.href='https://www.binance.com'; a.target='_blank'; a.rel='noopener';
+      a.innerHTML='<img src="'+rel+'binance.svg" alt="" style="height:16px;width:16px;margin-right:6px;vertical-align:middle;"/><span data-i18n="binance">Binance</span>';
+      a.setAttribute('data-i18n','binance');
+    });
+  }
+  function ensureLangSelect(){
     var sel=document.getElementById('langSelect');
     if(!sel){
       var header=document.querySelector('header');
@@ -166,10 +186,12 @@
     }
     return sel;
   }
-  function populate(sel){
+  function populate(sel,L){
     if(sel.options.length>0) return;
-    var c=currLang();
-    LANGS.forEach(function(code){ var o=document.createElement('option'); o.value=code; o.textContent=code.toUpperCase(); if(code===c) o.selected=true; sel.appendChild(o); });
+    ALL.forEach(function(code){
+      var o=document.createElement('option'); o.value=code; o.textContent=code.toUpperCase();
+      if(code===L) o.selected=true; sel.appendChild(o);
+    });
   }
   function updateNav(){
     var here=(location.pathname.split('/').pop()||'').toLowerCase();
@@ -179,8 +201,18 @@
     document.querySelectorAll('a[data-i18n="info"]').forEach(function(a){ a.setAttribute('href','info.html'); });
     document.querySelectorAll('a[data-i18n="donate"]').forEach(function(a){ a.setAttribute('href','donate.html'); });
   }
-  function updateSignalsWidget(){
-    var L=currLang();
+  function applyLang(L){
+    try{ localStorage.setItem('xtr_lang', L); }catch(e){}
+    document.documentElement.setAttribute('lang', L);
+    // Prefer tua i18n se c'è
+    if(window.i18n && i18n.setLanguage){ try{i18n.setLanguage(L);}catch(e){} }
+    else if(window.setLanguage){ try{ setLanguage(L); }catch(e){} }
+    else if(window.applyI18n){ try{ applyI18n(L); }catch(e){} }
+    // Fallback: almeno il titolo segnali
+    document.querySelectorAll('[data-i18n="live_signals"], #signals h2, h2#signalsTitle').forEach(function(el){
+      el.textContent = LIVE[L] || LIVE['en'];
+    });
+    // segnali widget: param o data-lang
     document.querySelectorAll('#signals,[data-widget="signals"],iframe[src*="signals"]').forEach(function(el){
       if(el.tagName==='IFRAME'){
         try{ var u=new URL(el.src, location.href); u.searchParams.set('lang', L); el.src=u.toString(); }catch(e){}
@@ -188,19 +220,17 @@
         el.setAttribute('data-lang', L);
       }
     });
-    if(window.i18n && i18n.setLanguage) i18n.setLanguage(L);
-    else if(window.setLanguage) try{ setLanguage(L); }catch(e){}
-    else if(window.applyI18n) try{ applyI18n(L); }catch(e){}
   }
   function onChange(sel){
     var code=sel.value||'en';
     var pref=inLangDir()? '../':'';
-    location.href=pref+code+'/index.html';
+    location.href=pref+code+'/index.html?lang='+code;
   }
   function init(){
     if(!inLangDir()) return;
-    setDocLang();
-    var sel=ensureSelect(); populate(sel); updateNav(); updateSignalsWidget();
+    ensureFavicon(); fixBinance(); updateNav();
+    var L=currLang();
+    var sel=ensureLangSelect(); populate(sel,L); applyLang(L);
     if(!sel.__xtr){ sel.__xtr=true; sel.addEventListener('change', function(){ onChange(sel); }); }
   }
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); } else { init(); }
