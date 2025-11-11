@@ -197,7 +197,10 @@
 <link href="https://X-Trader.cloud/vi/" hreflang="vi" rel="alternate"/>
 <link href="https://X-Trader.cloud/zh/" hreflang="zh" rel="alternate"/>
 <link href="https://X-Trader.cloud/" hreflang="en" rel="alternate"/>
-</link></link></link></head>
+</link></link></link><script src="../assets/js/i18n.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/fallback.js"></script>
+</head>
 <body class="min-h-screen">
 <header class="px-4 py-3 sticky top-0 z-50 backdrop-blur bg-black/50 border-b border-slate-800">
 <div class="max-w-6xl mx-auto flex items-center gap-3 justify-between">
@@ -598,5 +601,32 @@
 <script src="assets/js/app.js"></script>
 <script src="assets/js/fallback.js"></script>
 <script src="../assets/js/sync-nav.js"></script>
+
+<script>
+(function(){
+  var CODES = ['ar', 'de', 'en', 'es', 'fr', 'hi', 'id', 'it', 'ja', 'ko', 'nl', 'pl', 'pt', 'ru', 'tr', 'uk', 'vi', 'zh'];
+  function getPrefix(){
+    var p = window.location.pathname;
+    for(var i=0;i<CODES.length;i++){
+      if(p.indexOf('/'+CODES[i]+'/') !== -1) return '../';
+    }
+    return '';
+  }
+  function hook(){
+    var sel = document.getElementById('langSelect');
+    if(!sel) return;
+    if(sel.__xtr_hooked) return; sel.__xtr_hooked = true;
+    sel.addEventListener('change', function(){
+      var code = sel.value || 'en';
+      var pref = getPrefix();
+      window.location.href = pref + code + '/index.html';
+    });
+  }
+  if(document.readyState==='complete') hook();
+  window.addEventListener('DOMContentLoaded', hook);
+  window.addEventListener('load', hook);
+})();
+</script>
+
 </body>
 </html>

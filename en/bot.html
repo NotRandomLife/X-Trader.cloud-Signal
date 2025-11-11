@@ -142,5 +142,32 @@
 </footer>
 <script src="../assets/js/sync-nav.js"></script>
 <script src="../assets/js/trade-ui.js"></script>
+
+<script>
+(function(){
+  var CODES = ['ar', 'de', 'en', 'es', 'fr', 'hi', 'id', 'it', 'ja', 'ko', 'nl', 'pl', 'pt', 'ru', 'tr', 'uk', 'vi', 'zh'];
+  function getPrefix(){
+    var p = window.location.pathname;
+    for(var i=0;i<CODES.length;i++){
+      if(p.indexOf('/'+CODES[i]+'/') !== -1) return '../';
+    }
+    return '';
+  }
+  function hook(){
+    var sel = document.getElementById('langSelect');
+    if(!sel) return;
+    if(sel.__xtr_hooked) return; sel.__xtr_hooked = true;
+    sel.addEventListener('change', function(){
+      var code = sel.value || 'en';
+      var pref = getPrefix();
+      window.location.href = pref + code + '/index.html';
+    });
+  }
+  if(document.readyState==='complete') hook();
+  window.addEventListener('DOMContentLoaded', hook);
+  window.addEventListener('load', hook);
+})();
+</script>
+
 </body>
 </html>
