@@ -110,7 +110,7 @@
 <a class="btn" data-i18n="auto_bot" href="bot.html">Auto Trading Bot</a>
 <a class="btn bg-slate-800/80" data-i18n="info" href="info.html">Info</a>
 <a class="btn" data-i18n="donate" href="donate.html">Donate</a>
-<a 2000="" class="btn" data-i18n="binance" href="https://www.binance.com/activity/referral-entry/CPA?ref=CPA_00U6WMXPUI" http:="" rel="noopener" style="background-image:url(\'data:image/svg+xml;utf8,&lt;svg xmlns=" svg"="" target="_blank" viewbox="0 0 256 256" www.w3.org=""><g fill="%23F3BA2F"><path d="M128 32l32 32-32 32-32-32 32-32zm0 64l32 32-32 32-32-32 32-32zM64 96l32 32-32 32-32-32 32-32zm128 0l32 32-32 32-32-32 32-32zM128 160l32 32-32 32-32-32 32-32z"></path></g>\'); background-repeat:no-repeat; background-position:left center; background-size:16px 16px; padding-left:24px;"&gt;<span data-i18n="binance">Binance</span></a>
+<a class="btn" data-i18n="binance" href="https://www.binance.com" target="_blank" rel="noopener"><img src="../assets/binance.svg" alt="" style="height:16px;width:16px;margin-right:6px;vertical-align:middle;"/><span data-i18n="binance">Binance</span></a>
 <a class="btn" data-i18n="support" href="mailto:NRL.Crypto.Trade@gmail.com">Support</a>
 </nav>
 </div>
@@ -150,7 +150,7 @@
 <a class="btn" data-i18n="auto_bot" href="bot.html">Auto Trading Bot</a>
 <a class="btn" data-i18n="info" href="info.html">Info</a>
 <a class="btn" data-i18n="donate" href="donate.html">Dona</a>
-<a 2000="" class="btn" href="https://www.binance.com/activity/referral-entry/CPA?ref=CPA_00U6WMXPUI" http:="" rel="noopener" style="background-image:url('data:image/svg+xml;utf8,&lt;svg xmlns=" svg"="" target="_blank" viewbox="0 0 256 256" www.w3.org=""><g fill="%23F3BA2F"><path d="M128 32l32 32-32 32-32-32 32-32zm0 64l32 32-32 32-32-32 32-32zM64 96l32 32-32 32-32-32 32-32zm128 0l32 32-32 32-32-32 32-32zM128 160l32 32-32 32-32-32 32-32z"></path></g>');background-repeat:no-repeat;background-position:left center;background-size:16px 16px;padding-left:24px;"&gt;<span data-i18n="binance">Binance</span></a>
+<a class="btn" data-i18n="binance" href="https://www.binance.com" target="_blank" rel="noopener"><img src="../assets/binance.svg" alt="" style="height:16px;width:16px;margin-right:6px;vertical-align:middle;"/><span data-i18n="binance">Binance</span></a>
 <a class="btn" data-i18n="support" href="mailto:NRL.Crypto.Trade@gmail.com">Supporto</a>
 </nav>
 </div>
@@ -211,6 +211,101 @@
     }
   }
   if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', init); } else { init(); }
+  window.addEventListener('load', init);
+})();
+</script>
+
+
+<!-- /* XTR-LANG-NAV */ -->
+<script>
+(function(){
+  var LANGS = [["en", "English"], ["it", "Italiano"], ["es", "Espa\u00f1ol"], ["fr", "Fran\u00e7ais"], ["de", "Deutsch"], ["pt", "Portugu\u00eas"], ["ar", "\u0627\u0644\u0639\u0631\u0628\u064a\u0629"], ["hi", "\u0939\u093f\u0928\u094d\u0926\u0940"], ["id", "Bahasa Indonesia"], ["ja", "\u65e5\u672c\u8a9e"], ["ko", "\ud55c\uad6d\uc5b4"], ["nl", "Nederlands"], ["pl", "Polski"], ["ru", "\u0420\u0443\u0441\u0441\u043a\u0438\u0439"], ["tr", "T\u00fcrk\u00e7e"], ["uk", "\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430"], ["vi", "Ti\u1ebfng Vi\u1ec7t"], ["zh", "\u4e2d\u6587"]];
+
+  function getLangFromPath(){
+    var m = location.pathname.match(/\/([a-z]{2})\//i);
+    return m ? m[1].toLowerCase() : 'en';
+  }
+  function inLangDir(){
+    return /\/([a-z]{2})\//i.test(location.pathname);
+  }
+  function prefixToRoot(){
+    return inLangDir()? '../' : '';
+  }
+  function ensureSelect(){
+    var sel = document.getElementById('langSelect');
+    if(!sel){
+      var header = document.querySelector('header');
+      sel = document.createElement('select');
+      sel.id='langSelect';
+      sel.className='bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-sm';
+      var wrap = document.createElement('div');
+      wrap.style.marginLeft='auto';
+      wrap.appendChild(sel);
+      if(header){
+        header.appendChild(wrap);
+      }else{
+        document.body.insertBefore(wrap, document.body.firstChild);
+      }
+    }
+    return sel;
+  }
+  function populateSelect(sel){
+    if(sel.options.length>0) return;
+    var curr = getLangFromPath();
+    LANGS.forEach(function(t){ 
+      var opt=document.createElement('option'); 
+      opt.value=t[0]; opt.textContent=t[1]; 
+      if(t[0]===curr) opt.selected=true; 
+      sel.appendChild(opt);
+    });
+  }
+  function setNavLinks(){
+    var lang = getLangFromPath();
+    var here = location.pathname.split('/').pop().toLowerCase();
+    var inIndex = here==='' || here==='index.html';
+    var pref = ''; // we are *inside* /<lang>/ pages; links should be relative to that folder
+    if(!inLangDir()){ pref = ''; } // root fallback (unlikely except homepage)
+    // header & footer
+    var scopes = [document];
+    scopes.forEach(function(sc){
+      var navLive = sc.querySelectorAll('a#navLive, a[data-i18n="live_signals"]');
+      navLive.forEach(function(a){ a.setAttribute('href', inIndex ? './#signals' : 'index.html#signals'); });
+      var aBot = sc.querySelectorAll('a[data-i18n="auto_bot"]');
+      aBot.forEach(function(a){ a.setAttribute('href','bot.html'); });
+      var aInfo = sc.querySelectorAll('a[data-i18n="info"]');
+      aInfo.forEach(function(a){ a.setAttribute('href','info.html'); });
+      var aDon = sc.querySelectorAll('a[data-i18n="donate"]');
+      aDon.forEach(function(a){ a.setAttribute('href','donate.html'); });
+    });
+  }
+  function fixBinance(){
+    var rel = inLangDir()? '../assets/' : 'assets/';
+    var anchors = document.querySelectorAll('a[data-i18n="binance"], a[href*="binance.com"]');
+    anchors.forEach(function(a){
+      a.className = (a.className||'').includes('btn') ? a.className : ('btn ' + (a.className||''));
+      a.setAttribute('href','https://www.binance.com');
+      a.setAttribute('target','_blank');
+      a.setAttribute('rel','noopener');
+      a.innerHTML = '<img src="'+rel+'binance.svg" alt="" style="height:16px;width:16px;margin-right:6px;vertical-align:middle;"/><span data-i18n="binance">Binance</span>';
+      a.setAttribute('data-i18n','binance');
+    });
+  }
+  function onChange(sel){
+    var code = sel.value || 'en';
+    var pref = inLangDir()? '../' : '';
+    location.href = pref + code + '/index.html';
+  }
+  function init(){
+    var sel = ensureSelect();
+    populateSelect(sel);
+    setNavLinks();
+    fixBinance();
+    if(!sel.__xtr){
+      sel.__xtr = true;
+      sel.addEventListener('change', function(){ onChange(sel); });
+    }
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); } else { init(); }
   window.addEventListener('load', init);
 })();
 </script>
