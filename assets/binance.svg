@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
-  <g fill="#F3BA2F">
-    <path d="M128 32l32 32-32 32-32-32 32-32zm0 64l32 32-32 32-32-32 32-32zM64 96l32 32-32 32-32-32 32-32zm128 0l32 32-32 32-32-32 32-32zM128 160l32 32-32 32-32-32 32-32z"/>
-  </g>
-</svg>
