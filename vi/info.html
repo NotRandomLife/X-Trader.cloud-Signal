@@ -2,6 +2,8 @@
 
 <html lang="vi">
 <head>
+<link rel="icon" href="../assets/Xy_logo.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/logo-32.png">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#0b0f1a" name="theme-color"/>
@@ -157,18 +159,34 @@
 </footer>
 <script src="../assets/js/sync-nav.js"></script>
 
-<!-- XTR-LANG-NAV (do not remove) -->
+<!-- XTR-LANG-GLUE-FINAL2 -->
 <script>
 (function(){
-  var LANGS = ["en", "it", "es", "fr", "de", "pt", "ar", "hi", "id", "ja", "ko", "nl", "pl", "ru", "tr", "uk", "vi", "zh"];
-  function currLang(){ var m=location.pathname.match(/\/([a-z]{2})\//i); return m?m[1].toLowerCase():'en'; }
+  var LANGS=['en','it','es','fr','de','pt','ar','hi','id','ja','ko','nl','pl','ru','tr','uk','vi','zh'];
   function inLangDir(){ return /\/([a-z]{2})\//i.test(location.pathname); }
-  function ensureSelect(){
+  function currLang(){ var m=location.pathname.match(/\/([a-z]{2})\//i); return m?m[1].toLowerCase():'en'; }
+  function ensureFavicon(){
+    var rel=inLangDir()?'../assets/':'assets/';
+    if(!document.querySelector('link[rel="icon"]')){
+      var head=document.querySelector('head')||document.body;
+      var l1=document.createElement('link'); l1.rel='icon'; l1.href=rel+'Xy_logo.ico'; head.appendChild(l1);
+      var l2=document.createElement('link'); l2.rel='icon'; l2.type='image/png'; l2.sizes='32x32'; l2.href=rel+'logo-32.png'; head.appendChild(l2);
+    }
+  }
+  function fixBinance(){
+    var rel=inLangDir()?'../assets/':'assets/';
+    document.querySelectorAll('a[data-i18n="binance"], a[href*="binance.com"]').forEach(function(a){
+      a.className=((a.className||'').includes('btn')?a.className:('btn '+(a.className||'')));
+      a.href='https://www.binance.com'; a.target='_blank'; a.rel='noopener';
+      a.innerHTML='<img src="'+rel+'binance.svg" alt="" style="height:16px;width:16px;margin-right:6px;vertical-align:middle;"/><span data-i18n="binance">Binance</span>';
+      a.setAttribute('data-i18n','binance');
+    });
+  }
+  function ensureLangSelect(){
     var sel=document.getElementById('langSelect');
     if(!sel){
       var header=document.querySelector('header');
-      sel=document.createElement('select');
-      sel.id='langSelect';
+      sel=document.createElement('select'); sel.id='langSelect';
       sel.className='bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-sm';
       var wrap=document.createElement('div'); wrap.style.marginLeft='auto'; wrap.appendChild(sel);
       if(header){ header.appendChild(wrap); } else { document.body.insertBefore(wrap, document.body.firstChild); }
@@ -177,38 +195,19 @@
   }
   function populate(sel){
     if(sel.options.length>0) return;
-    var c=currLang();
+    var current=currLang();
     LANGS.forEach(function(code){
-      var opt=document.createElement('option'); opt.value=code; opt.textContent=code.toUpperCase();
-      if(code===c) opt.selected=true; sel.appendChild(opt);
+      var o=document.createElement('option'); o.value=code; o.textContent=code.toUpperCase();
+      if(code===current) o.selected=true; sel.appendChild(o);
     });
   }
-  function setNav(){
+  function updateNav(){
     var here=(location.pathname.split('/').pop()||'').toLowerCase();
     var inIndex=(here===''||here==='index.html');
-    // top/bottom nav: live -> index#signals ; bot -> bot.html ; info -> info.html ; donate -> donate.html
     document.querySelectorAll('a#navLive, a[data-i18n="live_signals"]').forEach(function(a){ a.setAttribute('href', inIndex?'./#signals':'index.html#signals'); });
     document.querySelectorAll('a[data-i18n="auto_bot"]').forEach(function(a){ a.setAttribute('href','bot.html'); });
     document.querySelectorAll('a[data-i18n="info"]').forEach(function(a){ a.setAttribute('href','info.html'); });
     document.querySelectorAll('a[data-i18n="donate"]').forEach(function(a){ a.setAttribute('href','donate.html'); });
-    // binance inline icon + text, single line
-    var rel=inLangDir()?'../assets/':'assets/';
-    document.querySelectorAll('a[data-i18n="binance"], a[href*="binance.com"]').forEach(function(a){
-      a.className=((a.className||'').includes('btn')?a.className:('btn '+(a.className||'')));
-      a.setAttribute('href','https://www.binance.com'); a.setAttribute('target','_blank'); a.setAttribute('rel','noopener');
-      a.innerHTML='<img src="'+rel+'binance.svg" alt="" style="height:16px;width:16px;margin-right:6px;vertical-align:middle;"/><span data-i18n="binance">Binance</span>';
-      a.setAttribute('data-i18n','binance');
-    });
-  }
-  function fixFavicon(){
-    var rel=inLangDir()?'../assets/':'assets/';
-    var have=false;
-    document.querySelectorAll('link[rel="icon"]').forEach(function(){have=true;});
-    if(!have){
-      var head=document.querySelector('head')||document.body;
-      var l1=document.createElement('link'); l1.rel='icon'; l1.href=rel+'Xy_logo.ico'; head.appendChild(l1);
-      var l2=document.createElement('link'); l2.rel='icon'; l2.type='image/png'; l2.sizes='32x32'; l2.href=rel+'logo-32.png'; head.appendChild(l2);
-    }
   }
   function onChange(sel){
     var code=sel.value||'en';
@@ -216,9 +215,10 @@
     location.href=pref+code+'/index.html';
   }
   function init(){
-    if(!inLangDir()) return; // only language pages
-    var sel=ensureSelect(); populate(sel); setNav(); fixFavicon();
-    if(!sel.__xtr){ sel.__xtr=true; sel.addEventListener('change', function(){onChange(sel);}); }
+    if(!inLangDir()) return; // SOLO pagine lingua
+    ensureFavicon(); fixBinance();
+    var sel=ensureLangSelect(); populate(sel); updateNav();
+    if(!sel.__xtr){ sel.__xtr=true; sel.addEventListener('change', function(){ onChange(sel); }); }
   }
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); } else { init(); }
   window.addEventListener('load', init);

@@ -159,10 +159,10 @@
 </footer>
 <script src="../assets/js/sync-nav.js"></script>
 
-<!-- XTR-LANG-GLUE-FINAL -->
+<!-- XTR-LANG-GLUE-FINAL2 -->
 <script>
 (function(){
-  var LANGS = ["en", "it", "es", "fr", "de", "pt", "ar", "hi", "id", "ja", "ko", "nl", "pl", "ru", "tr", "uk", "vi", "zh"];
+  var LANGS=['en','it','es','fr','de','pt','ar','hi','id','ja','ko','nl','pl','ru','tr','uk','vi','zh'];
   function inLangDir(){ return /\/([a-z]{2})\//i.test(location.pathname); }
   function currLang(){ var m=location.pathname.match(/\/([a-z]{2})\//i); return m?m[1].toLowerCase():'en'; }
   function ensureFavicon(){
@@ -204,7 +204,6 @@
   function updateNav(){
     var here=(location.pathname.split('/').pop()||'').toLowerCase();
     var inIndex=(here===''||here==='index.html');
-    // aggiornamento di TUTTI i bottoni (header e footer)
     document.querySelectorAll('a#navLive, a[data-i18n="live_signals"]').forEach(function(a){ a.setAttribute('href', inIndex?'./#signals':'index.html#signals'); });
     document.querySelectorAll('a[data-i18n="auto_bot"]').forEach(function(a){ a.setAttribute('href','bot.html'); });
     document.querySelectorAll('a[data-i18n="info"]').forEach(function(a){ a.setAttribute('href','info.html'); });
@@ -216,7 +215,7 @@
     location.href=pref+code+'/index.html';
   }
   function init(){
-    if(!inLangDir()) return; // solo pagine lingua
+    if(!inLangDir()) return; // SOLO pagine lingua
     ensureFavicon(); fixBinance();
     var sel=ensureLangSelect(); populate(sel); updateNav();
     if(!sel.__xtr){ sel.__xtr=true; sel.addEventListener('change', function(){ onChange(sel); }); }
