@@ -2,11 +2,10 @@
 
 <html lang="nl">
 <head>
-<link rel="icon" href="../assets/Xy_logo.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="../assets/logo-32.png">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#0b0f1a" name="theme-color"/>
+<link href="assets/logo-32.png" rel="icon" type="image/png"/>
 <script src="https://cdn.tailwindcss.com"></script>
 <title>X-Trader.cloud</title>
 <!-- BASE THEME -->
@@ -206,11 +205,11 @@
 <img alt="logo" class="logo-img" src="../assets/logo.png"/><span class="ml-2 font-extrabold tracking-wide">X TRADER</span>
 </a>
 <nav class="hidden md:flex items-center gap-2">
-<a class="btn bg-slate-800/80" data-i18n="live_signals" href="./#signals" id="navLive">Segnali AI Crypto</a>
+<a class="btn bg-slate-800/80" data-i18n="live_signals" href="./" id="navLive">Segnali AI Crypto</a>
 <a class="btn" data-i18n="auto_bot" href="bot.html">Auto Trading Bot</a>
 <a class="btn" data-i18n="info" href="info.html">Info</a>
 <a class="btn" data-i18n="donate" href="donate.html">Donate</a>
-<a class="btn" data-i18n="binance" href="https://www.binance.com" target="_blank" rel="noopener"><img src="../assets/binance.svg" alt="" style="height:16px;width:16px;margin-right:6px;vertical-align:middle;"/><span data-i18n="binance">Binance</span></a>
+<a 2000="" class="btn" data-i18n="binance" href="https://www.binance.com/activity/referral-entry/CPA?ref=CPA_00U6WMXPUI" http:="" rel="noopener" style="background-image:url(\'data:image/svg+xml;utf8,&lt;svg xmlns=" svg"="" target="_blank" viewbox="0 0 256 256" www.w3.org=""><g fill="%23F3BA2F"><path d="M128 32l32 32-32 32-32-32 32-32zm0 64l32 32-32 32-32-32 32-32zM64 96l32 32-32 32-32-32 32-32zm128 0l32 32-32 32-32-32 32-32zM128 160l32 32-32 32-32-32 32-32z"></path></g>\'); background-repeat:no-repeat; background-position:left center; background-size:16px 16px; padding-left:24px;"&gt;<span data-i18n="binance">Binance</span></a>
 <a class="btn" data-i18n="support" href="mailto:NRL.Crypto.Trade@gmail.com">Support</a>
 </nav>
 </div>
@@ -282,7 +281,7 @@
 <img alt="logo" class="logo-img" src="../assets/logo.png" style="height:24px;width:auto;margin-right:8px;"/><span class="ml-2 font-extrabold tracking-wide">X TRADER</span>
 </a>
 <nav class="flex flex-wrap items-center gap-2 justify-center"><a class="btn brand-logo" href="/"><img alt="logo" src="../assets/logo.png" style="height:16px;width:16px;margin-right:6px;vertical-align:middle;"/></a>
-<a class="btn" data-i18n="nav_live" href="./#signals" id="navLive">Segnali live</a>
+<a class="btn" data-i18n="nav_live" href="index.html" id="navLive">Segnali live</a>
 <a class="btn" data-i18n="auto_bot" href="bot.html">Auto Trading Bot</a>
 <a class="btn" data-i18n="info" href="info.html">Info</a>
 <a class="btn" data-i18n="donate" href="donate.html">Dona</a>
@@ -598,5 +597,64 @@
 <script src="assets/js/app.js"></script>
 <script src="assets/js/fallback.js"></script>
 <script src="../assets/js/sync-nav.js"></script>
+
+<script>
+(function(){
+  var LANGS = [["en", "English"], ["it", "Italiano"], ["es", "Espa\u00f1ol"], ["fr", "Fran\u00e7ais"], ["de", "Deutsch"], ["pt", "Portugu\u00eas"], ["ar", "\u0627\u0644\u0639\u0631\u0628\u064a\u0629"], ["hi", "\u0939\u093f\u0928\u094d\u0926\u0940"], ["id", "Bahasa Indonesia"], ["ja", "\u65e5\u672c\u8a9e"], ["ko", "\ud55c\uad6d\uc5b4"], ["nl", "Nederlands"], ["pl", "Polski"], ["ru", "\u0420\u0443\u0441\u0441\u043a\u0438\u0439"], ["tr", "T\u00fcrk\u00e7e"], ["uk", "\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430"], ["vi", "Ti\u1ebfng Vi\u1ec7t"], ["zh", "\u4e2d\u6587"]];
+  function currentLangFromPath(){
+    var m = location.pathname.match(/\/([a-z]{2})\//i);
+    return m ? m[1].toLowerCase() : 'en';
+  }
+  function ensureSelect(){
+    var sel = document.getElementById('langSelect');
+    if(!sel){
+      var header = document.querySelector('header');
+      if(!header){
+        // fallback: create one at top of body
+        header = document.body;
+      }
+      sel = document.createElement('select');
+      sel.id = 'langSelect';
+      sel.className = 'bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-sm';
+      var wrap = document.createElement('div');
+      wrap.style.marginLeft='auto';
+      wrap.appendChild(sel);
+      if(header.firstElementChild){
+        header.firstElementChild.appendChild(wrap);
+      }else{
+        header.appendChild(wrap);
+      }
+    }
+    return sel;
+  }
+  function populate(sel){
+    if(sel.options.length > 0) return; // non toccare se già popolato
+    var curr = currentLangFromPath();
+    LANGS.forEach(function(item){
+      var opt = document.createElement('option');
+      opt.value = item[0];
+      opt.textContent = item[1];
+      if(item[0]===curr) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  }
+  function redirect(sel){
+    var code = sel.value || 'en';
+    var pref = location.pathname.match(/\/([a-z]{2})\//i) ? '../' : '';
+    location.href = pref + code + '/index.html';
+  }
+  function init(){
+    var sel = ensureSelect();
+    populate(sel);
+    if(!sel.__xnav){
+      sel.__xnav = true;
+      sel.addEventListener('change', function(){ redirect(sel); });
+    }
+  }
+  if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', init); } else { init(); }
+  window.addEventListener('load', init);
+})();
+</script>
+
 </body>
 </html>
