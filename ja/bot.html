@@ -2,6 +2,8 @@
 
 <html lang="ja">
 <head>
+<link rel="icon" href="../assets/Xy_logo.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/logo-32.png">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#0b0f1a" name="theme-color"/>
@@ -106,7 +108,7 @@
 <div class="flex items-center gap-3">
 <a class="flex items-center gap-2 text-lg font-semibold" href="/"><img alt="logo" class="logo-img" src="../assets/logo.png" style="height:32px;width:auto;margin-right:8px;"/>X TRADER</a>
 <nav class="hidden md:flex items-center gap-2">
-<a class="btn" data-i18n="live_signals" href="./" id="navLive">Segnali AI Crypto</a>
+<a class="btn" data-i18n="live_signals" href="index.html#signals" id="navLive"><span data-i18n="live_signals"></span></a>
 <a class="btn bg-slate-800/80" data-i18n="auto_bot" href="bot.html">Auto Trading Bot</a>
 <a class="btn" data-i18n="info" href="info.html">Info</a>
 <a class="btn" data-i18n="donate" href="donate.html">Donate</a>
@@ -131,7 +133,7 @@
 <img alt="logo" class="logo-img" src="../assets/logo.png" style="height:24px;width:auto;margin-right:8px;"/><span class="ml-2 font-extrabold tracking-wide">X TRADER</span>
 </a>
 <nav class="flex flex-wrap items-center gap-2 justify-center"><a class="btn brand-logo" href="/"><img alt="logo" src="../assets/logo.png" style="height:16px;width:16px;margin-right:6px;vertical-align:middle;"/></a>
-<a class="btn" data-i18n="nav_live" href="index.html" id="navLive">Segnali live</a>
+<a class="btn" data-i18n="nav_live" href="index.html" id="navLive"><span data-i18n="live_signals"></span></a>
 <a class="btn" data-i18n="auto_bot" href="bot.html">Auto Trading Bot</a>
 <a class="btn" data-i18n="info" href="info.html">Info</a>
 <a class="btn" data-i18n="donate" href="donate.html">Dona</a>
@@ -205,6 +207,53 @@
     if(!inLangDir()) return; // only language pages
     var sel=ensureSelect(); populate(sel); setNav(); fixFavicon();
     if(!sel.__xtr){ sel.__xtr=true; sel.addEventListener('change', function(){onChange(sel);}); }
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); } else { init(); }
+  window.addEventListener('load', init);
+})();
+</script>
+
+
+<!-- XTR-LANG-NAV-FINAL -->
+<script>
+(function(){
+  function currLang(){ var m=location.pathname.match(/\/([a-z]{2})\//i); return m?m[1].toLowerCase():'en'; }
+  function inLangDir(){ return /\/([a-z]{2})\//i.test(location.pathname); }
+  function ensureSelect(){
+    var sel=document.getElementById('langSelect');
+    if(!sel){
+      var header=document.querySelector('header');
+      sel=document.createElement('select'); sel.id='langSelect';
+      sel.className='bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-sm';
+      var wrap=document.createElement('div'); wrap.style.marginLeft='auto'; wrap.appendChild(sel);
+      if(header){ header.appendChild(wrap); } else { document.body.insertBefore(wrap, document.body.firstChild); }
+    }
+    return sel;
+  }
+  function populate(sel){
+    if(sel.options.length>0) return;
+    var c=currLang();
+    ['en','it','es','fr','de','pt','ar','hi','id','ja','ko','nl','pl','ru','tr','uk','vi','zh'].forEach(function(code){
+      var opt=document.createElement('option'); opt.value=code; opt.textContent=code.toUpperCase(); if(code===c) opt.selected=true; sel.appendChild(opt);
+    });
+  }
+  function setNav(){
+    if(!inLangDir()) return;
+    var here=(location.pathname.split('/').pop()||'').toLowerCase();
+    var inIndex=(here===''||here==='index.html');
+    document.querySelectorAll('a#navLive, a[data-i18n="live_signals"]').forEach(function(a){ a.setAttribute('href', inIndex?'./#signals':'index.html#signals'); });
+    document.querySelectorAll('a[data-i18n="auto_bot"]').forEach(function(a){ a.setAttribute('href','bot.html'); });
+    document.querySelectorAll('a[data-i18n="info"]').forEach(function(a){ a.setAttribute('href','info.html'); });
+    document.querySelectorAll('a[data-i18n="donate"]').forEach(function(a){ a.setAttribute('href','donate.html'); });
+  }
+  function onChange(sel){
+    var code=sel.value||'en';
+    var pref=inLangDir()?'../':'';
+    location.href=pref+code+'/index.html';
+  }
+  function init(){
+    var sel=ensureSelect(); populate(sel); setNav();
+    if(!sel.__xtr){ sel.__xtr=true; sel.addEventListener('change', function(){ onChange(sel); }); }
   }
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); } else { init(); }
   window.addEventListener('load', init);
