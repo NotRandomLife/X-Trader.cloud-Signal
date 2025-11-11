@@ -3,9 +3,7 @@
 <html lang="it">
 <head>
 <link rel="icon" href="../assets/Xy_logo.ico">
-<link rel="shortcut icon" href="../assets/Xy_logo.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/logo-32.png">
-
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#0b0f1a" name="theme-color"/>
@@ -110,7 +108,7 @@
 <div class="flex items-center gap-3">
 <a class="flex items-center gap-2 text-lg font-semibold" href="/"><img alt="logo" class="logo-img" src="../assets/logo.png" style="height:32px;width:auto;margin-right:8px;"/>X TRADER</a>
 <nav class="hidden md:flex items-center gap-2">
-<a class="btn" data-i18n="live_signals" href="./" id="navLive">Segnali AI Crypto</a>
+<a class="btn" data-i18n="live_signals" href="index.html#signals" id="navLive"><span data-i18n="live_signals"></span></a>
 <a class="btn bg-slate-800/80" data-i18n="auto_bot" href="bot.html">Auto Trading Bot</a>
 <a class="btn" data-i18n="info" href="info.html">Info</a>
 <a class="btn" data-i18n="donate" href="donate.html">Donate</a>
@@ -135,7 +133,7 @@
 <img alt="logo" class="logo-img" src="../assets/logo.png" style="height:24px;width:auto;margin-right:8px;"/><span class="ml-2 font-extrabold tracking-wide">X TRADER</span>
 </a>
 <nav class="flex flex-wrap items-center gap-2 justify-center"><a class="btn brand-logo" href="/"><img alt="logo" src="../assets/logo.png" style="height:16px;width:16px;margin-right:6px;vertical-align:middle;"/></a>
-<a class="btn" data-i18n="nav_live" href="index.html" id="navLive">Segnali live</a>
+<a class="btn" data-i18n="nav_live" href="index.html" id="navLive"><span data-i18n="live_signals"></span></a>
 <a class="btn" data-i18n="auto_bot" href="bot.html">Auto Trading Bot</a>
 <a class="btn" data-i18n="info" href="info.html">Info</a>
 <a class="btn" data-i18n="donate" href="donate.html">Dona</a>
@@ -147,35 +145,81 @@
 <script src="../assets/js/sync-nav.js"></script>
 <script src="assets/js/trade-ui.js"></script>
 
-<!-- XTR-LANG-SYNC2 -->
+<!-- XTR-LANG-NAV (do not remove) -->
 <script>
 (function(){
-  var LIVE={"en": "AI Crypto Signals", "it": "Segnali AI Crypto", "es": "Señales AI Cripto", "fr": "Signaux IA Crypto", "de": "KI-Krypto-Signale", "pt": "Sinais de Cripto IA", "ar": "إشارات تشفير بالذكاء الاصطناعي", "hi": "एआई क्रिप्टो संकेत", "id": "Sinyal Kripto AI", "ja": "AI暗号シグナル", "ko": "AI 암호화 신호", "nl": "AI Crypto Signalen", "pl": "Sygnały AI Crypto", "ru": "Сигналы ИИ Крипто", "tr": "Yapay Zeka Kripto Sinyalleri", "uk": "Криптосигнали ШІ", "vi": "Tín hiệu Crypto AI", "zh": "AI 加密信号"};
-  var ALL=["en", "it", "es", "fr", "de", "pt", "ar", "hi", "id", "ja", "ko", "nl", "pl", "ru", "tr", "uk", "vi", "zh"];
-  function q(name){ var m=location.search.match(new RegExp('[?&]'+name+'=([^&]+)')); return m?decodeURIComponent(m[1]):null; }
-  function currLang(){
-    var ql=q('lang'); if(ql) return ql.toLowerCase();
-    var m=location.pathname.match(/\/([a-z]{2})\//i); return m?m[1].toLowerCase():'en';
-  }
+  var LANGS = ["en", "it", "es", "fr", "de", "pt", "ar", "hi", "id", "ja", "ko", "nl", "pl", "ru", "tr", "uk", "vi", "zh"];
+  function currLang(){ var m=location.pathname.match(/\/([a-z]{2})\//i); return m?m[1].toLowerCase():'en'; }
   function inLangDir(){ return /\/([a-z]{2})\//i.test(location.pathname); }
-  function ensureFavicon(){
+  function ensureSelect(){
+    var sel=document.getElementById('langSelect');
+    if(!sel){
+      var header=document.querySelector('header');
+      sel=document.createElement('select');
+      sel.id='langSelect';
+      sel.className='bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-sm';
+      var wrap=document.createElement('div'); wrap.style.marginLeft='auto'; wrap.appendChild(sel);
+      if(header){ header.appendChild(wrap); } else { document.body.insertBefore(wrap, document.body.firstChild); }
+    }
+    return sel;
+  }
+  function populate(sel){
+    if(sel.options.length>0) return;
+    var c=currLang();
+    LANGS.forEach(function(code){
+      var opt=document.createElement('option'); opt.value=code; opt.textContent=code.toUpperCase();
+      if(code===c) opt.selected=true; sel.appendChild(opt);
+    });
+  }
+  function setNav(){
+    var here=(location.pathname.split('/').pop()||'').toLowerCase();
+    var inIndex=(here===''||here==='index.html');
+    // top/bottom nav: live -> index#signals ; bot -> bot.html ; info -> info.html ; donate -> donate.html
+    document.querySelectorAll('a#navLive, a[data-i18n="live_signals"]').forEach(function(a){ a.setAttribute('href', inIndex?'./#signals':'index.html#signals'); });
+    document.querySelectorAll('a[data-i18n="auto_bot"]').forEach(function(a){ a.setAttribute('href','bot.html'); });
+    document.querySelectorAll('a[data-i18n="info"]').forEach(function(a){ a.setAttribute('href','info.html'); });
+    document.querySelectorAll('a[data-i18n="donate"]').forEach(function(a){ a.setAttribute('href','donate.html'); });
+    // binance inline icon + text, single line
     var rel=inLangDir()?'../assets/':'assets/';
-    if(!document.querySelector('link[rel="icon"]')){
+    document.querySelectorAll('a[data-i18n="binance"], a[href*="binance.com"]').forEach(function(a){
+      a.className=((a.className||'').includes('btn')?a.className:('btn '+(a.className||'')));
+      a.setAttribute('href','https://www.binance.com'); a.setAttribute('target','_blank'); a.setAttribute('rel','noopener');
+      a.innerHTML='<img src="'+rel+'binance.svg" alt="" style="height:16px;width:16px;margin-right:6px;vertical-align:middle;"/><span data-i18n="binance">Binance</span>';
+      a.setAttribute('data-i18n','binance');
+    });
+  }
+  function fixFavicon(){
+    var rel=inLangDir()?'../assets/':'assets/';
+    var have=false;
+    document.querySelectorAll('link[rel="icon"]').forEach(function(){have=true;});
+    if(!have){
       var head=document.querySelector('head')||document.body;
       var l1=document.createElement('link'); l1.rel='icon'; l1.href=rel+'Xy_logo.ico'; head.appendChild(l1);
       var l2=document.createElement('link'); l2.rel='icon'; l2.type='image/png'; l2.sizes='32x32'; l2.href=rel+'logo-32.png'; head.appendChild(l2);
     }
   }
-  function fixBinance(){
-    var rel=inLangDir()?'../assets/':'assets/';
-    document.querySelectorAll('a[data-i18n="binance"], a[href*="binance.com"]').forEach(function(a){
-      var cls=(a.className||''); if(cls.indexOf('btn')===-1) cls='btn '+cls; a.className=cls.trim();
-      a.href='https://www.binance.com'; a.target='_blank'; a.rel='noopener';
-      a.innerHTML='<img src="'+rel+'binance.svg" alt="" style="height:16px;width:16px;margin-right:6px;vertical-align:middle;"/><span data-i18n="binance">Binance</span>';
-      a.setAttribute('data-i18n','binance');
-    });
+  function onChange(sel){
+    var code=sel.value||'en';
+    var pref=inLangDir()?'../':'';
+    location.href=pref+code+'/index.html';
   }
-  function ensureLangSelect(){
+  function init(){
+    if(!inLangDir()) return; // only language pages
+    var sel=ensureSelect(); populate(sel); setNav(); fixFavicon();
+    if(!sel.__xtr){ sel.__xtr=true; sel.addEventListener('change', function(){onChange(sel);}); }
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); } else { init(); }
+  window.addEventListener('load', init);
+})();
+</script>
+
+
+<!-- XTR-LANG-NAV-FINAL -->
+<script>
+(function(){
+  function currLang(){ var m=location.pathname.match(/\/([a-z]{2})\//i); return m?m[1].toLowerCase():'en'; }
+  function inLangDir(){ return /\/([a-z]{2})\//i.test(location.pathname); }
+  function ensureSelect(){
     var sel=document.getElementById('langSelect');
     if(!sel){
       var header=document.querySelector('header');
@@ -186,14 +230,15 @@
     }
     return sel;
   }
-  function populate(sel,L){
+  function populate(sel){
     if(sel.options.length>0) return;
-    ALL.forEach(function(code){
-      var o=document.createElement('option'); o.value=code; o.textContent=code.toUpperCase();
-      if(code===L) o.selected=true; sel.appendChild(o);
+    var c=currLang();
+    ['en','it','es','fr','de','pt','ar','hi','id','ja','ko','nl','pl','ru','tr','uk','vi','zh'].forEach(function(code){
+      var opt=document.createElement('option'); opt.value=code; opt.textContent=code.toUpperCase(); if(code===c) opt.selected=true; sel.appendChild(opt);
     });
   }
-  function updateNav(){
+  function setNav(){
+    if(!inLangDir()) return;
     var here=(location.pathname.split('/').pop()||'').toLowerCase();
     var inIndex=(here===''||here==='index.html');
     document.querySelectorAll('a#navLive, a[data-i18n="live_signals"]').forEach(function(a){ a.setAttribute('href', inIndex?'./#signals':'index.html#signals'); });
@@ -201,36 +246,13 @@
     document.querySelectorAll('a[data-i18n="info"]').forEach(function(a){ a.setAttribute('href','info.html'); });
     document.querySelectorAll('a[data-i18n="donate"]').forEach(function(a){ a.setAttribute('href','donate.html'); });
   }
-  function applyLang(L){
-    try{ localStorage.setItem('xtr_lang', L); }catch(e){}
-    document.documentElement.setAttribute('lang', L);
-    // Prefer tua i18n se c'è
-    if(window.i18n && i18n.setLanguage){ try{i18n.setLanguage(L);}catch(e){} }
-    else if(window.setLanguage){ try{ setLanguage(L); }catch(e){} }
-    else if(window.applyI18n){ try{ applyI18n(L); }catch(e){} }
-    // Fallback: almeno il titolo segnali
-    document.querySelectorAll('[data-i18n="live_signals"], #signals h2, h2#signalsTitle').forEach(function(el){
-      el.textContent = LIVE[L] || LIVE['en'];
-    });
-    // segnali widget: param o data-lang
-    document.querySelectorAll('#signals,[data-widget="signals"],iframe[src*="signals"]').forEach(function(el){
-      if(el.tagName==='IFRAME'){
-        try{ var u=new URL(el.src, location.href); u.searchParams.set('lang', L); el.src=u.toString(); }catch(e){}
-      }else{
-        el.setAttribute('data-lang', L);
-      }
-    });
-  }
   function onChange(sel){
     var code=sel.value||'en';
-    var pref=inLangDir()? '../':'';
-    location.href=pref+code+'/index.html?lang='+code;
+    var pref=inLangDir()?'../':'';
+    location.href=pref+code+'/index.html';
   }
   function init(){
-    if(!inLangDir()) return;
-    ensureFavicon(); fixBinance(); updateNav();
-    var L=currLang();
-    var sel=ensureLangSelect(); populate(sel,L); applyLang(L);
+    var sel=ensureSelect(); populate(sel); setNav();
     if(!sel.__xtr){ sel.__xtr=true; sel.addEventListener('change', function(){ onChange(sel); }); }
   }
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); } else { init(); }
