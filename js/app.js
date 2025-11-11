@@ -1,5 +1,5 @@
 
-/** X-TRADER FRONTEND - final9 (auto-update + ad-refresh optimized) **/
+/** X-TRADER FRONTEND — final9 (auto-update + ad-refresh optimized) **/
 const API_BASE = "http://localhost:5000";
 const REFRESH_MIN = 5;               // 5-minute cadence info-only
 const POLL_MS = 3000;                // long-poll (ms)
@@ -179,13 +179,13 @@ function renderSignals(list){
     const td1 = document.createElement("td");
     const td2 = document.createElement("td");
     const td3 = document.createElement("td");
-    td1.textContent = item.pair || "-";
+    td1.textContent = item.pair || "–";
     const s = (item.signal||"").toUpperCase();
     td2.textContent = s;
     if (s==="BUY") td2.classList.add("signal-buy");
     else if (s==="SELL") td2.classList.add("signal-sell");
     else td2.classList.add("signal-hold");
-    const ts = item.timestamp ? new Date(item.timestamp).toISOString().slice(0,19).replace("T"," ") : "-";
+    const ts = item.timestamp ? new Date(item.timestamp).toISOString().slice(0,19).replace("T"," ") : "–";
     td3.textContent = ts + " UTC";
     tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
     tbody.appendChild(tr);
@@ -200,8 +200,8 @@ function renderSignalCards(list){
     const div = document.createElement("div");
     div.className = "signal-card";
     div.innerHTML = `
-      <div class="pair">-</div>
-      <div class="signal signal-hold">-</div>
+      <div class="pair">–</div>
+      <div class="signal signal-hold">–</div>
       <div class="time">${LANGS[lang].loading}</div>
     `;
     wrap.appendChild(div); return;
@@ -211,10 +211,10 @@ function renderSignalCards(list){
     const card = document.createElement("div");
     card.className = "signal-card";
     const cls = s==="BUY" ? "signal-buy" : (s==="SELL" ? "signal-sell" : "signal-hold");
-    const ts = item.timestamp ? new Date(item.timestamp).toISOString().slice(0,19).replace("T"," ") + " UTC" : "-";
+    const ts = item.timestamp ? new Date(item.timestamp).toISOString().slice(0,19).replace("T"," ") + " UTC" : "–";
     card.innerHTML = `
-      <div class="pair">${item.pair || "-"}</div>
-      <div class="signal ${cls}">${s || "-"}</div>
+      <div class="pair">${item.pair || "–"}</div>
+      <div class="signal ${cls}">${s || "–"}</div>
       <div class="time">${ts}</div>
     `;
     wrap.appendChild(card);
@@ -311,7 +311,7 @@ function onSignalsUpdated(){
   dispatchAdRefreshNow();
 }
 
-// Pre-refresh scheduler 30-60s before each 5-min boundary
+// Pre-refresh scheduler 30–60s before each 5-min boundary
 function scheduleAdPreRefresh(){
   const now = new Date();
   const m = now.getMinutes();
@@ -325,7 +325,7 @@ function scheduleAdPreRefresh(){
   setTimeout(scheduleAdPreRefresh, diff + 1000);
 }
 
-// Periodic safety refresh (every 90s) - still in-view and per-slot throttled
+// Periodic safety refresh (every 90s) — still in-view and per-slot throttled
 setInterval(refreshAdSlotsInView, 90000);
 
 // Kickoff

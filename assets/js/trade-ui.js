@@ -146,7 +146,7 @@
         auto_borrow: !!borrow.checked,
         auto_repay:  !!repay.checked,
         hold_action: 'update_sl_tp_if_profit',
-        source: 'X-Trader.cloud',
+        source: 'x-trader.cloud',
         t: Date.now()
       };
       if(s.signal==='buy' || s.signal==='sell'){
