@@ -1,0 +1,10 @@
+{
+  "name": "xtrader-allinone",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@netlify/functions": "^2.0.0",
+    "@netlify/blobs": "^6.0.0"
+  }
+}
