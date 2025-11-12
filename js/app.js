@@ -1,4 +1,126 @@
 
+// ==== XTR GLOBAL I18N (ALL 18 LANGS, NO EN FALLBACK) ====
+(function(){
+  // Language detection (no fallback to EN unless page itself is 'en')
+  function detectLang(){
+    var a = (document.documentElement.getAttribute('lang')||'').toLowerCase();
+    if (a) return a;
+    var m = (location.pathname||'').match(/\/([a-z]{2})\//i);
+    if (m) return m[1].toLowerCase();
+    return ''; // do nothing if not present
+  }
+
+  // Dictionaries harvested from HTML
+  const STATIC_TRANSL = {"ar": {"live_signals": "إشارات تشفير بالذكاء الاصطناعي", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}, "de": {"live_signals": "KI‑Krypto‑Signale", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}, "en": {"live_signals": "AI Crypto Signals", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}, "es": {"live_signals": "Señales AI Cripto", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}, "fr": {"live_signals": "Signaux IA Crypto", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}, "hi": {"live_signals": "एआई क्रिप्टो संकेत", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}, "id": {"live_signals": "Sinyal Kripto AI", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}, "it": {"live_signals": "Segnali AI Crypto", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}, "ja": {"live_signals": "AI暗号シグナル", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}, "js": {}, "ko": {"live_signals": "AI 암호화 신호", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}, "nl": {"live_signals": "AI Crypto‑signalen", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}, "pl": {"live_signals": "Sygnały AI Crypto", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}, "pt": {"live_signals": "Sinais de Cripto IA", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}, "ru": {"live_signals": "Сигналы ИИ Крипто", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}, "tr": {"live_signals": "YZ Kripto Sinyalleri", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}, "uk": {"live_signals": "Криптосигнали ШІ", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}, "vi": {"live_signals": "Tín hiệu Crypto AI", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}, "zh": {"live_signals": "AI 加密信号", "auto_bot": "Auto Trading Bot", "info": "Info", "donate": "Donate", "binance": "Binance", "support": "Support", "copied": "Copiato!", "live_banner": "Segnali", "signals_note": "Allineato ai 5 minuti con finestra di tolleranza.", "refresh": "Aggiorna", "next_signal": "Prossimo segnale tra", "how_to_use": "How to use", "usage_title": "Getting started", "risk": "Risks", "contact_support": "Contact support", "send_email": "Send email"}};
+  const LANG_CODES = ["ar", "de", "en", "es", "fr", "hi", "id", "it", "ja", "js", "ko", "nl", "pl", "pt", "ru", "tr", "uk", "vi", "zh"];
+  const NAV_KEYS = ["home", "live_signals", "auto_bot", "info", "donate", "support", "start_trading", "open_bot", "more_info"];
+  const HREF_MAP = {"index.html": "home", "bot.html": "auto_bot", "info.html": "info", "donate.html": "donate"};
+
+  // Apply translations to elements with data-i18n
+  function applyI18n(lang){
+    if (!lang || !STATIC_TRANSL[lang]) return;
+    const dict = STATIC_TRANSL[lang];
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const k = el.getAttribute('data-i18n');
+      if (!k) return;
+      if (el.closest && el.closest('#langBtn')) return; // never touch "Languages" button
+      const val = dict[k];
+      if (!val) return; // NO fallback: skip if missing
+      el.textContent = val;
+    });
+  }
+
+  // Hydrate anchors/buttons without data-i18n using href-based mapping
+  function hydrateNav(lang){
+    if (!lang || !STATIC_TRANSL[lang]) return;
+    const dict = STATIC_TRANSL[lang];
+    document.querySelectorAll('a,button').forEach(el=>{
+      if (el.closest && el.closest('#langBtn')) return;
+      if (el.hasAttribute && el.hasAttribute('data-i18n')) return;
+      const href = (el.getAttribute && el.getAttribute('href')||'').split('?')[0].split('#')[0];
+      const file = href.split('/').pop();
+      const key = HREF_MAP[file] || ((href||'').toLowerCase().startsWith('mailto:') || (href||'').toLowerCase().includes('support') ? 'support' : null);
+      if (!key) return;
+      // only update if we have a translation in this language
+      const val = dict[key];
+      if (!val) return; // NO fallback
+      let replaced = false;
+      (el.childNodes||[]).forEach(n=>{
+        if (n.nodeType===Node.TEXT_NODE){
+          n.nodeValue = ' ' + val + ' ';
+          replaced = true;
+        }
+      });
+      if (!replaced){
+        const t = el.querySelector && el.querySelector('.label, .nav-label, span:not([class*="icon"])');
+        if (t){ t.textContent = val; replaced = true; }
+      }
+      if (!replaced){
+        const s = document.createElement('span'); s.className='x-i18n-label'; s.textContent = val; el.appendChild(s);
+      }
+    });
+  }
+
+  // Kill any dropdown language widget (select / custom) except #langBtn
+  function killLangDropdowns(root){
+    const codes = new Set(LANG_CODES.concat(LANG_CODES.map(c=>c.toUpperCase())));
+    const scopes = root ? [root] : Array.from(document.querySelectorAll('header, nav, .navbar, .header'));
+    function isLangWidget(el){
+      if (!el || el.nodeType!==1) return false;
+      const id=(el.id||'').toLowerCase(), cls=(el.className||'').toLowerCase();
+      if (id.includes('lang') || cls.includes('lang')) return true;
+      if (el.tagName==='SELECT') return true;
+      const role=(el.getAttribute('role')||'').toLowerCase();
+      if (role==='combobox'||role==='listbox'||role==='menu'){
+        const t=(el.textContent||'').trim();
+        if (t.length<=3 && codes.has(t)) return true;
+      }
+      const txt=(el.textContent||'').trim();
+      if (txt.length<=3 && codes.has(txt) && el.closest && el.closest('header, nav, .navbar, .header')) return true;
+      return false;
+    }
+    function purge(el){
+      if (!el) return;
+      if (el.id==='langBtn' || (el.closest && el.closest('#langBtn'))) return;
+      if (isLangWidget(el)){ el.remove(); return; }
+      el.querySelectorAll && el.querySelectorAll('*').forEach(ch=>{
+        if (ch.id==='langBtn' || (ch.closest && ch.closest('#langBtn'))) return;
+        if (isLangWidget(ch)) ch.remove();
+      });
+    }
+    scopes.forEach(purge);
+  }
+
+  function runAll(){
+    const lang = detectLang();
+    killLangDropdowns();
+    if (lang){
+      applyI18n(lang);
+      hydrateNav(lang);
+    }
+  }
+
+  if (document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded', runAll, {once:true});
+  }else{
+    runAll();
+  }
+  // Observe late inserts
+  try{
+    const obs = new MutationObserver(muts=>{
+      for (const m of muts){
+        for (const n of (m.addedNodes||[])){
+          if (n.nodeType===1){
+            killLangDropdowns(n);
+          }
+        }
+      }
+    });
+    obs.observe(document.documentElement, {childList:true, subtree:true});
+  }catch(e){}
+})();
+
+
 // XTR_KILL_LANG_WIDGETS: remove any language dropdown/widget created at runtime
 (function(){
   if (window.__xtrKillLangWidgets) return; window.__xtrKillLangWidgets = true;
