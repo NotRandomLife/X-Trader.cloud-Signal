@@ -72,6 +72,22 @@ async function getMaxBorrowable(asset, isolatedSymbol, apiKey, secret){
   return await binanceSigned("GET", "/sapi/v1/margin/maxBorrowable", params, apiKey, secret);
 }
 
+
+async function placeTakeProfit({ symbol, side, quantity, price, isIsolated, apiKey, secret }){
+  // Place a simple LIMIT TP (GTC). For LONG we SELL limit; for SHORT we BUY limit.
+  const params = {
+    symbol,
+    side,
+    type: "LIMIT",
+    timeInForce: "GTC",
+    price: price.toFixed(6),
+    quantity: quantity.toString(),
+    isIsolated: isIsolated ? "TRUE" : "FALSE",
+    newClientOrderId: `xtrader-tp-${Date.now()}`
+  };
+  return await binanceSigned("POST", "/sapi/v1/margin/order", params, apiKey, secret);
+}
+
 async function placeStopLoss({ symbol, side, quantity, stopPrice, isIsolated, apiKey, secret }){
   // STOP_LOSS (limit) or STOP_LOSS_MARKET (market). We'll use STOP_LOSS to be explicit and clamp quantity.
   const params = {
@@ -154,6 +170,13 @@ export default async (req) => {
             await placeStopLoss({ symbol, side: "SELL", quantity: qtyForSL, stopPrice: stopPrice.toFixed(6), isIsolated, apiKey: api_key, secret: api_secret });
           }
         }
+                if(tp_pct){
+          const tpPrice = (entryAvg * (1 + (Number(tp_pct)/100)));
+          const qtyForTP = clampQuantity(executedQty, filters, price);
+          if(qtyForTP>0){
+            await placeTakeProfit({ symbol, side: "SELL", quantity: qtyForTP, price: tpPrice, isIsolated, apiKey: api_key, secret: api_secret });
+          }
+        }
         return new Response(JSON.stringify({ ok:true, open: resOpen }), { status:200, headers:cors });
       } else if((side||"").toLowerCase() === "sell"){
         // SELL market using quantity
@@ -176,6 +199,13 @@ export default async (req) => {
           const qtyForSL = clampQuantity(executedQty, filters, price);
           if(qtyForSL>0){
             await placeStopLoss({ symbol, side: "BUY", quantity: qtyForSL, stopPrice: stopPrice.toFixed(6), isIsolated, apiKey: api_key, secret: api_secret });
+          }
+        }
+                if(tp_pct){
+          const tpPrice = (entryAvg * (1 - (Number(tp_pct)/100)));
+          const qtyForTP = clampQuantity(executedQty, filters, price);
+          if(qtyForTP>0){
+            await placeTakeProfit({ symbol, side: "BUY", quantity: qtyForTP, price: tpPrice, isIsolated, apiKey: api_key, secret: api_secret });
           }
         }
         return new Response(JSON.stringify({ ok:true, open: resOpen }), { status:200, headers:cors });

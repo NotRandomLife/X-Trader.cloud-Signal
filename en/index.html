@@ -122,19 +122,19 @@
     }
   </style>
 <!-- XTRADER SEO START -->
-<meta content="AI crypto trading signals every 5 minutes." name="description"/>
-<meta "5="" "ai="" "auto="" "binance="" "binance"="" "bot="" "btc="" "crypto="" "day="" "risk="" "scalping",="" "stop="" "swing="" "take="" "trading="" "usdc",="" ,="" ai",="" alerts",="" automatic="" automatico="" automatico",="" bot="" bot",="" content="Bitcoin" futures",="" loss",="" management",="" minute="" name="keywords" price",="" profit",="" signals",="" strategy",="" trading="" trading",=""/>
+<meta name="description" content="AI crypto trading signals every 5 minutes. Auto-trade panel with margin, stop loss and take profit on Binance."/>
+<meta name="keywords" content="ai trading bot, automatic trading, crypto signals, binance, margin trading, stop loss, take profit, x-trader, 5m strategy, scalping, swing"/>
 <meta content="index,follow" name="robots"/>
 <link href="https://X-Trader.cloud/" rel="canonical"/>
 <meta content="X-Trader.cloud" property="og:title"/>
-<meta content="AI crypto trading signals every 5 minutes. | keywords: Bitcoin, BTC price, USDC, crypto signals, AI trading bot, Binance futures, day trading, scalping, swing trading, crypto alerts, 5 minute strategy, risk management, stop loss, take profit" property="og:description"/>
+<meta property="og:description" content="AI crypto trading signals every 5 minutes. Auto-trade panel with margin, stop loss and take profit on Binance."/>
 <meta content="https://X-Trader.cloud/" property="og:url"/>
 <meta content="https://X-Trader.cloud/og-image.jpg" property="og:image"/>
 <meta content="website" property="og:type"/>
 <meta content="X-Trader.cloud" property="og:site_name"/>
 <meta content="summary_large_image" name="twitter:card"/>
 <meta content="X-Trader.cloud" name="twitter:title"/>
-<meta content="AI crypto trading signals every 5 minutes. | keywords: Bitcoin, BTC price, USDC, crypto signals, AI trading bot, Binance futures, day trading, scalping, swing trading, crypto alerts, 5 minute strategy, risk management, stop loss, take profit" name="twitter:description"/>
+<meta name="twitter:description" content="AI crypto trading signals every 5 minutes. Auto-trade panel with margin, stop loss and take profit on Binance."/>
 <meta content="https://X-Trader.cloud/og-image.jpg" name="twitter:image"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -208,15 +208,15 @@
 </a>
 <nav class="hidden md:flex items-center gap-2">
 <a class="btn bg-slate-800/80" data-i18n="live_signals" href="./#signals" id="navLive"><span data-i18n="live_signals">AI Crypto Signals</span></a>
-<a class="btn" data-i18n="auto_bot" href="bot.html">Auto Trading Bot</a>
-<a class="btn" data-i18n="info" href="info.html">Info</a>
-<a class="btn" data-i18n="donate" href="donate.html">Donate</a>
+<a class="btn" data-i18n="auto_bot" href="./bot.html">Auto Trading Bot</a>
+<a class="btn" data-i18n="info" href="./info.html">Info</a>
+<a class="btn" data-i18n="donate" href="./donate.html">Donate</a>
 <a class="btn" data-i18n="binance" href="https://www.binance.com" target="_blank" rel="noopener"><img src="../assets/binance.svg" alt="" style="height:16px;width:16px;margin-right:6px;vertical-align:middle;"/><span data-i18n="binance">Binance</span></a>
 <a class="btn" data-i18n="support" href="mailto:NRL.Crypto.Trade@gmail.com">Support</a>
 </nav>
 </div>
 <div class="flex items-center gap-2">
-<select class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-sm" id="langSelect"></select>
+<a id="langBtn" class="px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm" href="../index.html">Languages</a>
 </div>
 </div>
 </header>
@@ -234,14 +234,14 @@
 <div class="slot-wide text-center">ADS 728×90 / 970×120</div>
 <div class="card signals-card rounded-2xl p-4">
 <div class="flex items-center justify-between mb-2">
-<h2 class="text-lg font-bold" id="titleSignals">Segnali AI Crypto</h2>
+<h2 class="text-lg font-bold" id="titleSignals" data-i18n="live_banner">Segnali AI Crypto</h2>
 <div class="flex items-center gap-2">
 <span class="text-xs text-slate-400" id="syncBadge"></span>
 <button class="px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm" data-i18n="refresh" id="refresh">Aggiorna</button>
 </div>
 </div>
 <div class="flex items-center justify-between text-xs text-slate-400 mb-2" id="countdownBar">
-<span id="countdownLabel">Prossimo segnale tra</span>
+<span id="countdownLabel" data-i18n="next_signal">Prossimo segnale tra</span>
 <span class="font-bold text-slate-200" id="countdown">--:--</span>
 </div>
 <div id="signals"></div>
@@ -283,10 +283,10 @@
 <img alt="logo" class="logo-img" src="../assets/logo.png" style="height:24px;width:auto;margin-right:8px;"/><span class="ml-2 font-extrabold tracking-wide">X TRADER</span>
 </a>
 <nav class="flex flex-wrap items-center gap-2 justify-center"><a class="btn brand-logo" href="/"><img alt="logo" src="../assets/logo.png" style="height:16px;width:16px;margin-right:6px;vertical-align:middle;"/></a>
-<a class="btn" data-i18n="nav_live" href="index.html" id="navLive"><span data-i18n="live_signals">AI Crypto Signals</span></a>
-<a class="btn" data-i18n="auto_bot" href="bot.html">Auto Trading Bot</a>
-<a class="btn" data-i18n="info" href="info.html">Info</a>
-<a class="btn" data-i18n="donate" href="donate.html">Dona</a>
+<a class="btn" data-i18n="nav_live" href="./index.html" id="navLive"><span data-i18n="live_signals">AI Crypto Signals</span></a>
+<a class="btn" data-i18n="auto_bot" href="./bot.html">Auto Trading Bot</a>
+<a class="btn" data-i18n="info" href="./info.html">Info</a>
+<a class="btn" data-i18n="donate" href="./donate.html">Dona</a>
 <a class="btn" data-i18n="binance" href="https://www.binance.com" target="_blank" rel="noopener"><img src="../assets/binance.svg" alt="" style="height:16px;width:16px;margin-right:6px;vertical-align:middle;"/><span data-i18n="binance">Binance</span></a>
 <a class="btn" data-i18n="support" href="mailto:NRL.Crypto.Trade@gmail.com">Supporto</a>
 </nav>
@@ -600,120 +600,9 @@
 <script src="../assets/js/fallback.js"></script>
 <script src="../assets/js/sync-nav.js"></script>
 
-<!-- XTR-LANG-NAV (do not remove) -->
-<script>
-(function(){
-  var LANGS = ["en", "it", "es", "fr", "de", "pt", "ar", "hi", "id", "ja", "ko", "nl", "pl", "ru", "tr", "uk", "vi", "zh"];
-  function currLang(){ var m=location.pathname.match(/\/([a-z]{2})\//i); return m?m[1].toLowerCase():'en'; }
-  function inLangDir(){ return /\/([a-z]{2})\//i.test(location.pathname); }
-  function ensureSelect(){
-    var sel=document.getElementById('langSelect');
-    if(!sel){
-      var header=document.querySelector('header');
-      sel=document.createElement('select');
-      sel.id='langSelect';
-      sel.className='bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-sm';
-      var wrap=document.createElement('div'); wrap.style.marginLeft='auto'; wrap.appendChild(sel);
-      if(header){ header.appendChild(wrap); } else { document.body.insertBefore(wrap, document.body.firstChild); }
-    }
-    return sel;
-  }
-  function populate(sel){
-    if(sel.options.length>0) return;
-    var c=currLang();
-    LANGS.forEach(function(code){
-      var opt=document.createElement('option'); opt.value=code; opt.textContent=code.toUpperCase();
-      if(code===c) opt.selected=true; sel.appendChild(opt);
-    });
-  }
-  function setNav(){
-    var here=(location.pathname.split('/').pop()||'').toLowerCase();
-    var inIndex=(here===''||here==='index.html');
-    // top/bottom nav: live -> index#signals ; bot -> bot.html ; info -> info.html ; donate -> donate.html
-    document.querySelectorAll('a#navLive, a[data-i18n="live_signals"]').forEach(function(a){ a.setAttribute('href', inIndex?'./#signals':'index.html#signals'); });
-    document.querySelectorAll('a[data-i18n="auto_bot"]').forEach(function(a){ a.setAttribute('href','bot.html'); });
-    document.querySelectorAll('a[data-i18n="info"]').forEach(function(a){ a.setAttribute('href','info.html'); });
-    document.querySelectorAll('a[data-i18n="donate"]').forEach(function(a){ a.setAttribute('href','donate.html'); });
-    // binance inline icon + text, single line
-    var rel=inLangDir()?'../assets/':'assets/';
-    document.querySelectorAll('a[data-i18n="binance"], a[href*="binance.com"]').forEach(function(a){
-      a.className=((a.className||'').includes('btn')?a.className:('btn '+(a.className||'')));
-      a.setAttribute('href','https://www.binance.com'); a.setAttribute('target','_blank'); a.setAttribute('rel','noopener');
-      a.innerHTML='<img src="'+rel+'binance.svg" alt="" style="height:16px;width:16px;margin-right:6px;vertical-align:middle;"/><span data-i18n="binance">Binance</span>';
-      a.setAttribute('data-i18n','binance');
-    });
-  }
-  function fixFavicon(){
-    var rel=inLangDir()?'../assets/':'assets/';
-    var have=false;
-    document.querySelectorAll('link[rel="icon"]').forEach(function(){have=true;});
-    if(!have){
-      var head=document.querySelector('head')||document.body;
-      var l1=document.createElement('link'); l1.rel='icon'; l1.href=rel+'Xy_logo.ico'; head.appendChild(l1);
-      var l2=document.createElement('link'); l2.rel='icon'; l2.type='image/png'; l2.sizes='32x32'; l2.href=rel+'logo-32.png'; head.appendChild(l2);
-    }
-  }
-  function onChange(sel){
-    var code=sel.value||'en';
-    var pref=inLangDir()?'../':'';
-    location.href=pref+code+'/index.html';
-  }
-  function init(){
-    if(!inLangDir()) return; // only language pages
-    var sel=ensureSelect(); populate(sel); setNav(); fixFavicon();
-    if(!sel.__xtr){ sel.__xtr=true; sel.addEventListener('change', function(){onChange(sel);}); }
-  }
-  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); } else { init(); }
-  window.addEventListener('load', init);
-})();
-</script>
+<!-- XTR-LANG-NAV removed (dropdown disabled) -->
 
 
-<!-- XTR-LANG-NAV-FINAL -->
-<script>
-(function(){
-  function currLang(){ var m=location.pathname.match(/\/([a-z]{2})\//i); return m?m[1].toLowerCase():'en'; }
-  function inLangDir(){ return /\/([a-z]{2})\//i.test(location.pathname); }
-  function ensureSelect(){
-    var sel=document.getElementById('langSelect');
-    if(!sel){
-      var header=document.querySelector('header');
-      sel=document.createElement('select'); sel.id='langSelect';
-      sel.className='bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-sm';
-      var wrap=document.createElement('div'); wrap.style.marginLeft='auto'; wrap.appendChild(sel);
-      if(header){ header.appendChild(wrap); } else { document.body.insertBefore(wrap, document.body.firstChild); }
-    }
-    return sel;
-  }
-  function populate(sel){
-    if(sel.options.length>0) return;
-    var c=currLang();
-    ['en','it','es','fr','de','pt','ar','hi','id','ja','ko','nl','pl','ru','tr','uk','vi','zh'].forEach(function(code){
-      var opt=document.createElement('option'); opt.value=code; opt.textContent=code.toUpperCase(); if(code===c) opt.selected=true; sel.appendChild(opt);
-    });
-  }
-  function setNav(){
-    if(!inLangDir()) return;
-    var here=(location.pathname.split('/').pop()||'').toLowerCase();
-    var inIndex=(here===''||here==='index.html');
-    document.querySelectorAll('a#navLive, a[data-i18n="live_signals"]').forEach(function(a){ a.setAttribute('href', inIndex?'./#signals':'index.html#signals'); });
-    document.querySelectorAll('a[data-i18n="auto_bot"]').forEach(function(a){ a.setAttribute('href','bot.html'); });
-    document.querySelectorAll('a[data-i18n="info"]').forEach(function(a){ a.setAttribute('href','info.html'); });
-    document.querySelectorAll('a[data-i18n="donate"]').forEach(function(a){ a.setAttribute('href','donate.html'); });
-  }
-  function onChange(sel){
-    var code=sel.value||'en';
-    var pref=inLangDir()?'../':'';
-    location.href=pref+code+'/index.html';
-  }
-  function init(){
-    var sel=ensureSelect(); populate(sel); setNav();
-    if(!sel.__xtr){ sel.__xtr=true; sel.addEventListener('change', function(){ onChange(sel); }); }
-  }
-  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); } else { init(); }
-  window.addEventListener('load', init);
-})();
-</script>
-
+<!-- XTR-LANG-NAV-FINAL removed -->
 </body>
 </html>

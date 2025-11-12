@@ -1,8 +1,12 @@
 
 (function(){
   const $=(s,p=document)=>p.querySelector(s), $$=(s,p=document)=>[...p.querySelectorAll(s)];
-  const I=window.I18N||{}; const pref=localStorage.getItem('lang'); const nav=(navigator.language||'en').toLowerCase();
-  let lang=pref||'en'; if(!I[lang]) lang='en';
+  const I=window.I18N||{};
+  const pref = localStorage.getItem('lang');
+  const htmlLang = (document.documentElement.lang||'').toLowerCase();
+  const pathLang = (location.pathname.split('/').filter(Boolean)[0]||'').toLowerCase();
+  let lang = (I[pathLang]?pathLang:(I[htmlLang]?htmlLang:(I[pref]?pref:'en')));
+  document.documentElement.lang = lang;
   function T(k){return (I[lang]&&I[lang][k])||(I['en']&&I['en'][k])||k;}
   function apply(){ $$('[data-i18n]').forEach(el=>{ el.textContent=T(el.getAttribute('data-i18n')); }); document.documentElement.lang=lang; const sel=$('#langSelect'); if(sel) sel.value=lang; }
   window.setLang=function(l){ if(I[l]){ lang=l; localStorage.setItem('lang',l); apply(); } };

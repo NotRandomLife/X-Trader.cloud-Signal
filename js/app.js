@@ -1,4 +1,50 @@
 
+// XTR_KILL_LANG_WIDGETS: remove any language dropdown/widget created at runtime
+(function(){
+  if (window.__xtrKillLangWidgets) return; window.__xtrKillLangWidgets = true;
+  const CODES = new Set(["ar","de","en","es","fr","hi","id","it","ja","ko","nl","pl","pt","ru","tr","uk","vi","zh","AR","DE","EN","ES","FR","HI","ID","IT","JA","KO","NL","PL","PT","RU","TR","UK","VI","ZH"]);
+  const NAV_SCOPE = "header, nav, .navbar, .header";
+  function isLangLikeText(t){ t=(t||"").trim(); return t.length<=3 && CODES.has(t); }
+  function isLangWidget(el){
+    if (!el || el.nodeType!==1) return false;
+    const id=(el.id||"").toLowerCase(), cls=(el.className||"").toLowerCase();
+    if (id.includes("lang") || cls.includes("lang")) return true;
+    if (el.tagName==="SELECT") return true;
+    const role=(el.getAttribute("role")||"").toLowerCase();
+    if ((role==="combobox"||role==="listbox"||role==="menu") && isLangLikeText(el.textContent)) return true;
+    if (isLangLikeText(el.textContent) && el.closest(NAV_SCOPE)) return true;
+    return false;
+  }
+  function purge(root){
+    const scope = root? [root] : Array.from(document.querySelectorAll(NAV_SCOPE));
+    function kill(el){
+      if (!el) return;
+      if (isLangWidget(el)){
+        if (el.id==="langBtn" || (el.closest && el.closest("#langBtn"))) return;
+        el.remove(); return;
+      }
+      el.querySelectorAll && el.querySelectorAll("*").forEach(ch=>{
+        if (isLangWidget(ch)){
+          if (ch.id==="langBtn" || (ch.closest && ch.closest("#langBtn"))) return;
+          ch.remove();
+        }
+      });
+    }
+    scope.forEach(kill);
+  }
+  const obs = new MutationObserver(muts=>{
+    for (const m of muts){
+      for (const n of (m.addedNodes||[])){
+        if (n.nodeType===1) purge(n);
+      }
+    }
+  });
+  if (document.readyState==="loading") document.addEventListener("DOMContentLoaded", ()=>purge());
+  purge();
+  try{ obs.observe(document.documentElement, {childList:true, subtree:true}); }catch(e){}
+})();
+
+
 /** X-TRADER FRONTEND - final9 (auto-update + ad-refresh optimized) **/
 const API_BASE = "http://localhost:5000";
 const REFRESH_MIN = 5;               // 5-minute cadence info-only
